@@ -68,8 +68,8 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
     defaultValues: card ? {
       name: card.name || "",
       slug: card.slug || "",
-      bankId: card.bankId || 0,
-      categoryId: card.categoryId || 0,
+      bankId: card.bankId !== null && card.bankId !== undefined ? Number(card.bankId) : 0,
+      categoryId: card.categoryId !== null && card.categoryId !== undefined ? Number(card.categoryId) : 0,
       annualFee: card.annualFee || "$0",
       introApr: card.introApr || "",
       regularApr: card.regularApr || "",
@@ -169,7 +169,7 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
                 <FormLabel>Bank</FormLabel>
                 <Select 
                   onValueChange={field.onChange} 
-                  defaultValue={field.value ? field.value.toString() : ""}
+                  defaultValue={field.value !== null && field.value !== undefined ? String(field.value) : ""}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -197,7 +197,7 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
                 <FormLabel>Category</FormLabel>
                 <Select 
                   onValueChange={field.onChange} 
-                  defaultValue={field.value ? field.value.toString() : ""}
+                  defaultValue={field.value !== null && field.value !== undefined ? String(field.value) : ""}
                 >
                   <FormControl>
                     <SelectTrigger>

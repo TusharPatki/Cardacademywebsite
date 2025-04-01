@@ -1,6 +1,7 @@
 import { pgTable, text, serial, integer, boolean, timestamp, unique } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { relations } from "drizzle-orm";
 
 // Users table for admin authentication
 export const users = pgTable("users", {
@@ -63,6 +64,30 @@ export const calculators = pgTable("calculators", {
   description: text("description").notNull(),
   iconName: text("icon_name").notNull(),
 });
+
+// Relations
+export const usersRelations = relations(users, ({ many }) => ({
+  // No relations for users currently
+}));
+
+export const categoriesRelations = relations(categories, ({ many }) => ({
+  cards: many(cards),
+}));
+
+export const banksRelations = relations(banks, ({ many }) => ({
+  cards: many(cards),
+}));
+
+export const cardsRelations = relations(cards, ({ one }) => ({
+  bank: one(banks, {
+    fields: [cards.bankId],
+    references: [banks.id],
+  }),
+  category: one(categories, {
+    fields: [cards.categoryId],
+    references: [categories.id],
+  }),
+}));
 
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({

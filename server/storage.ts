@@ -7,6 +7,8 @@ import {
   type Article, type InsertArticle,
   type Calculator, type InsertCalculator
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, asc, desc, and } from "drizzle-orm";
 
 export interface IStorage {
   // Users
@@ -478,4 +480,214 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Database-backed storage implementation
+export class DatabaseStorage implements IStorage {
+  // User methods
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db.insert(users).values(insertUser).returning();
+    return user;
+  }
+
+  // Category methods
+  async getAllCategories(): Promise<Category[]> {
+    return await db.select().from(categories);
+  }
+
+  async getCategory(id: number): Promise<Category | undefined> {
+    const [category] = await db.select().from(categories).where(eq(categories.id, id));
+    return category || undefined;
+  }
+
+  async getCategoryBySlug(slug: string): Promise<Category | undefined> {
+    const [category] = await db.select().from(categories).where(eq(categories.slug, slug));
+    return category || undefined;
+  }
+
+  async createCategory(insertCategory: InsertCategory): Promise<Category> {
+    const [category] = await db.insert(categories).values(insertCategory).returning();
+    return category;
+  }
+
+  async updateCategory(id: number, updateData: Partial<InsertCategory>): Promise<Category | undefined> {
+    const [category] = await db
+      .update(categories)
+      .set(updateData)
+      .where(eq(categories.id, id))
+      .returning();
+    return category || undefined;
+  }
+
+  async deleteCategory(id: number): Promise<boolean> {
+    const result = await db.delete(categories).where(eq(categories.id, id)).returning();
+    return result.length > 0;
+  }
+
+  // Bank methods
+  async getAllBanks(): Promise<Bank[]> {
+    return await db.select().from(banks);
+  }
+
+  async getBank(id: number): Promise<Bank | undefined> {
+    const [bank] = await db.select().from(banks).where(eq(banks.id, id));
+    return bank || undefined;
+  }
+
+  async getBankBySlug(slug: string): Promise<Bank | undefined> {
+    const [bank] = await db.select().from(banks).where(eq(banks.slug, slug));
+    return bank || undefined;
+  }
+
+  async createBank(insertBank: InsertBank): Promise<Bank> {
+    const [bank] = await db.insert(banks).values(insertBank).returning();
+    return bank;
+  }
+
+  async updateBank(id: number, updateData: Partial<InsertBank>): Promise<Bank | undefined> {
+    const [bank] = await db
+      .update(banks)
+      .set(updateData)
+      .where(eq(banks.id, id))
+      .returning();
+    return bank || undefined;
+  }
+
+  async deleteBank(id: number): Promise<boolean> {
+    const result = await db.delete(banks).where(eq(banks.id, id)).returning();
+    return result.length > 0;
+  }
+
+  // Card methods
+  async getAllCards(): Promise<Card[]> {
+    return await db.select().from(cards);
+  }
+
+  async getCard(id: number): Promise<Card | undefined> {
+    const [card] = await db.select().from(cards).where(eq(cards.id, id));
+    return card || undefined;
+  }
+
+  async getCardBySlug(slug: string): Promise<Card | undefined> {
+    const [card] = await db.select().from(cards).where(eq(cards.slug, slug));
+    return card || undefined;
+  }
+
+  async getCardsByCategory(categoryId: number): Promise<Card[]> {
+    return await db.select().from(cards).where(eq(cards.categoryId, categoryId));
+  }
+
+  async getCardsByBank(bankId: number): Promise<Card[]> {
+    return await db.select().from(cards).where(eq(cards.bankId, bankId));
+  }
+
+  async getFeaturedCards(): Promise<Card[]> {
+    return await db.select().from(cards).where(eq(cards.featured, true));
+  }
+
+  async createCard(insertCard: InsertCard): Promise<Card> {
+    const [card] = await db.insert(cards).values(insertCard).returning();
+    return card;
+  }
+
+  async updateCard(id: number, updateData: Partial<InsertCard>): Promise<Card | undefined> {
+    const [card] = await db
+      .update(cards)
+      .set(updateData)
+      .where(eq(cards.id, id))
+      .returning();
+    return card || undefined;
+  }
+
+  async deleteCard(id: number): Promise<boolean> {
+    const result = await db.delete(cards).where(eq(cards.id, id)).returning();
+    return result.length > 0;
+  }
+
+  // Article methods
+  async getAllArticles(): Promise<Article[]> {
+    return await db.select().from(articles).orderBy(desc(articles.publishDate));
+  }
+
+  async getArticle(id: number): Promise<Article | undefined> {
+    const [article] = await db.select().from(articles).where(eq(articles.id, id));
+    return article || undefined;
+  }
+
+  async getArticleBySlug(slug: string): Promise<Article | undefined> {
+    const [article] = await db.select().from(articles).where(eq(articles.slug, slug));
+    return article || undefined;
+  }
+
+  async getRecentArticles(limit: number): Promise<Article[]> {
+    return await db
+      .select()
+      .from(articles)
+      .orderBy(desc(articles.publishDate))
+      .limit(limit);
+  }
+
+  async createArticle(insertArticle: InsertArticle): Promise<Article> {
+    const [article] = await db.insert(articles).values(insertArticle).returning();
+    return article;
+  }
+
+  async updateArticle(id: number, updateData: Partial<InsertArticle>): Promise<Article | undefined> {
+    const [article] = await db
+      .update(articles)
+      .set(updateData)
+      .where(eq(articles.id, id))
+      .returning();
+    return article || undefined;
+  }
+
+  async deleteArticle(id: number): Promise<boolean> {
+    const result = await db.delete(articles).where(eq(articles.id, id)).returning();
+    return result.length > 0;
+  }
+
+  // Calculator methods
+  async getAllCalculators(): Promise<Calculator[]> {
+    return await db.select().from(calculators);
+  }
+
+  async getCalculator(id: number): Promise<Calculator | undefined> {
+    const [calculator] = await db.select().from(calculators).where(eq(calculators.id, id));
+    return calculator || undefined;
+  }
+
+  async getCalculatorBySlug(slug: string): Promise<Calculator | undefined> {
+    const [calculator] = await db.select().from(calculators).where(eq(calculators.slug, slug));
+    return calculator || undefined;
+  }
+
+  async createCalculator(insertCalculator: InsertCalculator): Promise<Calculator> {
+    const [calculator] = await db.insert(calculators).values(insertCalculator).returning();
+    return calculator;
+  }
+
+  async updateCalculator(id: number, updateData: Partial<InsertCalculator>): Promise<Calculator | undefined> {
+    const [calculator] = await db
+      .update(calculators)
+      .set(updateData)
+      .where(eq(calculators.id, id))
+      .returning();
+    return calculator || undefined;
+  }
+
+  async deleteCalculator(id: number): Promise<boolean> {
+    const result = await db.delete(calculators).where(eq(calculators.id, id)).returning();
+    return result.length > 0;
+  }
+}
+
+// Initialize the storage
+export const storage = new DatabaseStorage();
