@@ -66,14 +66,23 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: card ? {
-      ...card,
-      bankId: card.bankId.toString(),
-      categoryId: card.categoryId.toString(),
+      name: card.name || "",
+      slug: card.slug || "",
+      bankId: card.bankId || 0,
+      categoryId: card.categoryId || 0,
+      annualFee: card.annualFee || "$0",
+      introApr: card.introApr || "",
+      regularApr: card.regularApr || "",
+      rewardsDescription: card.rewardsDescription || "",
+      rating: card.rating || "",
+      featured: card.featured === true,
+      cardColorFrom: card.cardColorFrom || "#0F4C81",
+      cardColorTo: card.cardColorTo || "#0F4C81",
     } : {
       name: "",
       slug: "",
-      bankId: "",
-      categoryId: "",
+      bankId: 0,
+      categoryId: 0,
       annualFee: "$0",
       introApr: "",
       regularApr: "",
@@ -160,7 +169,7 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
                 <FormLabel>Bank</FormLabel>
                 <Select 
                   onValueChange={field.onChange} 
-                  defaultValue={field.value.toString()}
+                  defaultValue={field.value ? field.value.toString() : ""}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -188,7 +197,7 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
                 <FormLabel>Category</FormLabel>
                 <Select 
                   onValueChange={field.onChange} 
-                  defaultValue={field.value.toString()}
+                  defaultValue={field.value ? field.value.toString() : ""}
                 >
                   <FormControl>
                     <SelectTrigger>
