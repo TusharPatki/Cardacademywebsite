@@ -65,7 +65,7 @@ export function Newsletter() {
               <div className="mt-3 sm:mt-0 sm:ml-3">
                 <Button
                   type="submit"
-                  className="block rounded-md bg-accent py-3 px-5 text-base font-medium shadow hover:bg-accent-600 sm:px-10 w-full sm:w-auto"
+                  className="block rounded-md bg-accent py-3 px-5 text-base font-medium shadow hover:bg-accent-600 sm:px-10 w-full sm:w-auto text-black"
                   disabled={isLoading}
                 >
                   {isLoading ? "Subscribing..." : "Subscribe"}
