@@ -9,6 +9,63 @@ const MAX_REQUESTS_PER_MINUTE = 15;
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
 const requestTimestamps: number[] = [];
 
+// Helper function to improve table formatting - duplicated from gemini.ts
+function enhanceMarkdownTables(content: string): string {
+  let enhanced = content;
+  
+  // Fix table formatting issues - better detection of tables
+  const tableRegex = /### .*\n*(\|[^\n]+\|[^\n]*\n\|[-:\|\s]+\|[^\n]*\n(?:\|[^\n]+\|[^\n]*\n)+)/g;
+  enhanced = enhanced.replace(tableRegex, (match) => {
+    // Extract table title if present
+    const titleMatch = match.match(/###\s*(.*?)\n/);
+    const title = titleMatch ? titleMatch[1].trim() : '';
+    
+    // Clean up table content
+    const cleanedMatch = match
+      .replace(/\n{2,}/g, '\n') // Remove extra newlines
+      .replace(/\|\s*\-{3,}\s*\|/g, '| --- |') // Standardize divider rows
+      .replace(/\|\s*\-{3,}\s*:/g, '| ---:') // Fix right-aligned columns
+      .replace(/:\s*\-{3,}\s*\|/g, ':--- |') // Fix left-aligned columns
+      .replace(/:\s*\-{3,}\s*:/g, ':---:') // Fix center-aligned columns
+      .replace(/\| *([^|]*[^ ]) *\|/g, '| $1 |') // Clean up spacing inside cells
+      .trim();
+    
+    return cleanedMatch;
+  });
+  
+  // Handle "Best Suited For" tables which seem to have formatting issues
+  const bestSuitedRegex = /(#+\s*Best Suited For.*?\n+)(?!\|)(.+?)(?=\n\n|$)/s;
+  enhanced = enhanced.replace(bestSuitedRegex, (match, title, content) => {
+    // Try to extract data from malformed tables with || or | patterns
+    const rows = content.split(/\|\||(?:\n\|)/).filter((row: string) => row.trim());
+    
+    if (rows.length > 0) {
+      let fixedTable = '| Use Case | Best Card | Reason |\n|----------|-----------|--------|\n';
+      
+      for (const row of rows) {
+        // Extract data from row using regex
+        const parts = row.split('|').filter((part: string) => part.trim());
+        if (parts.length >= 3) {
+          fixedTable += `| ${parts[0].trim()} | ${parts[1].trim()} | ${parts[2].trim()} |\n`;
+        } else if (parts.length === 2) {
+          fixedTable += `| ${parts[0].trim()} | ${parts[1].trim()} | - |\n`;
+        }
+      }
+      
+      return `${title}\n${fixedTable}\n`;
+    }
+    
+    return match; // Return original if we can't fix it
+  });
+  
+  // Fix headings without proper spacing
+  enhanced = enhanced.replace(/###([^\n]+)/g, '### $1');
+  enhanced = enhanced.replace(/##([^\n]+)/g, '## $1');
+  enhanced = enhanced.replace(/#([^\n]+)/g, '# $1');
+  
+  return enhanced;
+}
+
 interface PerplexityResponse {
   id: string;
   model: string;
@@ -143,8 +200,11 @@ export async function generateResponse(
       });
     }
 
+    // Enhance table formatting using the same function from gemini.ts
+    const enhancedContent = enhanceMarkdownTables(responseContent);
+    
     return { 
-      response: responseContent,
+      response: enhancedContent,
       citations: citations.length > 0 ? citations : undefined
     };
   } catch (error) {

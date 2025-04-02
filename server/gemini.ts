@@ -107,6 +107,63 @@ Remember to:
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000; // ms
 
+// Helper function to improve table formatting 
+function enhanceMarkdownTables(content: string): string {
+  let enhanced = content;
+  
+  // Fix table formatting issues - better detection of tables
+  const tableRegex = /### .*\n*(\|[^\n]+\|[^\n]*\n\|[-:\|\s]+\|[^\n]*\n(?:\|[^\n]+\|[^\n]*\n)+)/g;
+  enhanced = enhanced.replace(tableRegex, (match) => {
+    // Extract table title if present
+    const titleMatch = match.match(/###\s*(.*?)\n/);
+    const title = titleMatch ? titleMatch[1].trim() : '';
+    
+    // Clean up table content
+    const cleanedMatch = match
+      .replace(/\n{2,}/g, '\n') // Remove extra newlines
+      .replace(/\|\s*\-{3,}\s*\|/g, '| --- |') // Standardize divider rows
+      .replace(/\|\s*\-{3,}\s*:/g, '| ---:') // Fix right-aligned columns
+      .replace(/:\s*\-{3,}\s*\|/g, ':--- |') // Fix left-aligned columns
+      .replace(/:\s*\-{3,}\s*:/g, ':---:') // Fix center-aligned columns
+      .replace(/\| *([^|]*[^ ]) *\|/g, '| $1 |') // Clean up spacing inside cells
+      .trim();
+    
+    return cleanedMatch;
+  });
+  
+  // Handle "Best Suited For" tables which seem to have formatting issues
+  const bestSuitedRegex = /(#+\s*Best Suited For.*?\n+)(?!\|)(.+?)(?=\n\n|$)/gs;
+  enhanced = enhanced.replace(bestSuitedRegex, (match, title, content) => {
+    // Try to extract data from malformed tables with || or | patterns
+    const rows = content.split(/\|\||(?:\n\|)/).filter(row => row.trim());
+    
+    if (rows.length > 0) {
+      let fixedTable = '| Use Case | Best Card | Reason |\n|----------|-----------|--------|\n';
+      
+      for (const row of rows) {
+        // Extract data from row using regex
+        const parts = row.split('|').filter(part => part.trim());
+        if (parts.length >= 3) {
+          fixedTable += `| ${parts[0].trim()} | ${parts[1].trim()} | ${parts[2].trim()} |\n`;
+        } else if (parts.length === 2) {
+          fixedTable += `| ${parts[0].trim()} | ${parts[1].trim()} | - |\n`;
+        }
+      }
+      
+      return `${title}\n${fixedTable}\n`;
+    }
+    
+    return match; // Return original if we can't fix it
+  });
+  
+  // Fix headings without proper spacing
+  enhanced = enhanced.replace(/###([^\n]+)/g, '### $1');
+  enhanced = enhanced.replace(/##([^\n]+)/g, '## $1');
+  enhanced = enhanced.replace(/#([^\n]+)/g, '# $1');
+  
+  return enhanced;
+}
+
 export async function generateResponse(
   messages: { role: "user" | "assistant" | "system"; content: string }[],
   retryCount = 0,
@@ -223,7 +280,10 @@ export async function generateResponse(
     console.log("Received response from Gemini API");
 
     // Extract content from Gemini response
-    const content = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't generate a response at this time.";
+    let content = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't generate a response at this time.";
+    
+    // Enhance table formatting before returning
+    content = enhanceMarkdownTables(content);
 
     return {
       content: content,

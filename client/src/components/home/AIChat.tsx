@@ -43,13 +43,59 @@ export function AIChat() {
   const enhanceMarkdown = (content: string): string => {
     let enhanced = content;
     
-    // Enhance table formatting
-    const tableRegex = /(\|[^\n]+\|\n\|[-:\|\s]+\|\n(?:\|[^\n]+\|\n)+)/g;
+    // Fix table formatting issues - better detection of tables
+    const tableRegex = /(?:###\s*.*)\n*(\|[^\n]+\|[^\n]*\n\|[-:\|\s]+\|[^\n]*\n(?:\|[^\n]+\|[^\n]*\n)+)/g;
     enhanced = enhanced.replace(tableRegex, (match) => {
-      return match
+      // Extract table title
+      const titleMatch = match.match(/###\s*(.*?)\n/);
+      const title = titleMatch ? titleMatch[1].trim() : '';
+      
+      // Extract table content
+      const tableMatch = match.match(/(\|[^\n]+\|[^\n]*\n\|[-:\|\s]+\|[^\n]*\n(?:\|[^\n]+\|[^\n]*\n)+)/);
+      let tableContent = tableMatch ? tableMatch[1] : '';
+      
+      // Clean up table content
+      tableContent = tableContent
         .replace(/\n{2,}/g, '\n') // Remove extra newlines
-        .replace(/\|(\s*-+\s*)\|/g, '|$1|') // Fix divider rows
+        .replace(/\|\s*\-{3,}\s*\|/g, '| --- |') // Standardize divider rows
+        .replace(/\|\s*\-{3,}\s*:/g, '| ---:') // Fix right-aligned columns
+        .replace(/:\s*\-{3,}\s*\|/g, ':--- |') // Fix left-aligned columns
+        .replace(/:\s*\-{3,}\s*:/g, ':---:') // Fix center-aligned columns
+        .replace(/\| *([^|]*[^ ]) *\|/g, '| $1 |') // Clean up spacing inside cells
         .trim();
+      
+      // Rebuild formatted table with title
+      return `### ${title}\n\n${tableContent}\n`;
+    });
+    
+    // Handle "Best Suited For" tables which seem to have formatting issues
+    const bestSuitedForRegex = /(?:##?\s*#?\s*Best Suited For[^\n]*\n+)(\|[^\n]+\|[^\n]*\n\|[-:\|\s]+\|[^\n]*\n)?(.+)/g;
+    enhanced = enhanced.replace(bestSuitedForRegex, (match, tableDef, content) => {
+      const title = '### Best Suited For';
+      
+      // If no proper table definition, try to format the content as a table
+      if (!tableDef || !tableDef.includes('|')) {
+        // Attempt to fix malformed table by extracting data
+        const rows = content.split('||').filter(row => row.trim());
+        
+        if (rows.length > 0) {
+          let fixedTable = '| Use Case | Best Card | Reason |\n|----------|-----------|--------|\n';
+          
+          for (const row of rows) {
+            // Extract data from row using regex
+            const parts = row.split('|').filter(part => part.trim());
+            if (parts.length >= 3) {
+              fixedTable += `| ${parts[0].trim()} | ${parts[1].trim()} | ${parts[2].trim()} |\n`;
+            } else if (parts.length === 2) {
+              fixedTable += `| ${parts[0].trim()} | ${parts[1].trim()} | - |\n`;
+            }
+          }
+          
+          return `${title}\n\n${fixedTable}\n`;
+        }
+      }
+      
+      return match; // Return original if we can't fix it
     });
     
     // Fix headings without proper spacing
