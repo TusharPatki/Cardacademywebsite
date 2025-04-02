@@ -63,39 +63,9 @@ export function CreditCardItem({ card, banks, showFullDetails = false }: CreditC
           )}
         </div>
         
-        {card.imageUrl ? (
-          <div className="mb-4 overflow-hidden rounded-md">
-            <img 
-              src={card.imageUrl} 
-              alt={card.name}
-              className="w-full h-auto object-contain" 
-              style={{maxHeight: "150px"}}
-              onError={(e) => {
-                // If image fails to load, show text instead
-                const target = e.target as HTMLImageElement;
-                target.style.display = "none";
-                
-                // Create a fallback element after the image fails
-                const parent = target.parentElement;
-                if (parent && !parent.querySelector('.fallback-content')) {
-                  const fallbackDiv = document.createElement('div');
-                  fallbackDiv.className = 'fallback-content';
-                  
-                  const titleElement = document.createElement('h3');
-                  titleElement.className = 'text-lg font-semibold text-gray-900 mb-2';
-                  titleElement.textContent = card.rewardsDescription.split('.')[0];
-                  
-                  fallbackDiv.appendChild(titleElement);
-                  parent.appendChild(fallbackDiv);
-                }
-              }}
-            />
-          </div>
-        ) : (
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            {card.rewardsDescription.split('.')[0]}
-          </h3>
-        )}
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          {card.rewardsDescription.split('.')[0]}
+        </h3>
         
         <p className="text-gray-600 text-sm mb-4">
           {showFullDetails 
