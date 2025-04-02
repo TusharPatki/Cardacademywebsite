@@ -26,7 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
-import { UploadIcon } from "lucide-react";
+import { UploadIcon, ImageIcon } from "lucide-react";
 import { type Card as CreditCard, type Bank, type Category } from "@/lib/types";
 
 interface CardFormProps {
@@ -37,7 +37,9 @@ interface CardFormProps {
 export function CardForm({ card, onSuccess }: CardFormProps) {
   const [isPending, setIsPending] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   
   // Fetch banks for the dropdown
@@ -120,7 +122,7 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
     }
   };
 
-  // Handle file selection
+  // Handle HTML file selection
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -165,6 +167,71 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
       // Reset the file input
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
+      }
+    }
+  };
+  
+  // Function to handle image upload
+  const handleImageUpload = () => {
+    if (imageInputRef.current) {
+      imageInputRef.current.click();
+    }
+  };
+  
+  // Handle image file selection
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    // Only allow JPEG or PNG files
+    if (!['image/jpeg', 'image/png'].includes(file.type)) {
+      toast({
+        title: "Invalid File Type",
+        description: "Please upload a JPEG or PNG image.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setIsUploading(true);
+    
+    try {
+      // Create a FormData object to send the file
+      const formData = new FormData();
+      formData.append('image', file);
+      
+      // Upload the image using the API endpoint
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to upload image');
+      }
+      
+      const data = await response.json();
+      
+      // Update the imageUrl field with the returned URL
+      form.setValue('imageUrl', data.imageUrl);
+      
+      toast({
+        title: "Image uploaded",
+        description: "The image has been uploaded successfully.",
+      });
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast({
+        title: "Upload Error",
+        description: "Failed to upload the image. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+      // Reset the file input
+      if (imageInputRef.current) {
+        imageInputRef.current.value = '';
       }
     }
   };
@@ -464,15 +531,53 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
           name="imageUrl"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Card Image URL</FormLabel>
+              <div className="flex justify-between items-center">
+                <FormLabel>Card Image</FormLabel>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleImageUpload}
+                  disabled={isUploading}
+                  className="flex items-center gap-1"
+                >
+                  <ImageIcon className="h-4 w-4" />
+                  {isUploading ? "Uploading..." : "Upload Image"}
+                </Button>
+              </div>
               <FormControl>
                 <Input 
                   placeholder="e.g. https://example.com/card-image.jpg" 
                   {...field} 
                 />
               </FormControl>
+              <input 
+                type="file" 
+                ref={imageInputRef} 
+                accept=".jpg,.jpeg,.png" 
+                onChange={handleImageChange} 
+                className="hidden"
+              />
+              {field.value && (
+                <div className="mt-2">
+                  <p className="text-sm text-gray-500 mb-2">Image Preview:</p>
+                  <img 
+                    src={field.value} 
+                    alt="Card Preview" 
+                    className="max-h-40 rounded-md border border-gray-200"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none';
+                      toast({
+                        title: "Image Error",
+                        description: "Could not load image preview. URL may be invalid.",
+                        variant: "destructive",
+                      });
+                    }}
+                  />
+                </div>
+              )}
               <p className="text-sm text-gray-500 mt-1">
-                Enter the URL for the card image (recommended size: 800x450px).
+                Enter the URL for the card image or upload one (JPEG/PNG, recommended size: 800x450px).
               </p>
               <FormMessage />
             </FormItem>
