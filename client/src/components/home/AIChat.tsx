@@ -235,14 +235,20 @@ export function AIChat() {
                           </code>
                         );
                       },
+                      h1: ({ node, ...props }) => (
+                        <h1 className="text-3xl font-bold mt-8 mb-4 text-gray-900 border-b pb-2" {...props} />
+                      ),
+                      h2: ({ node, ...props }) => (
+                        <h2 className="text-2xl font-semibold mt-6 mb-3 text-gray-800" {...props} />
+                      ),
                       h3: ({ node, ...props }) => (
-                        <h3 className="text-lg font-semibold mt-6 mb-2 text-gray-800" {...props} />
+                        <h3 className="text-xl font-semibold mt-5 mb-2 text-gray-800" {...props} />
                       ),
                       h4: ({ node, ...props }) => (
-                        <h4 className="text-base font-semibold mt-4 mb-2 text-gray-800" {...props} />
+                        <h4 className="text-lg font-medium mt-4 mb-2 text-gray-700" {...props} />
                       ),
                       p: ({ node, ...props }) => (
-                        <p className="my-2" {...props} />
+                        <p className="my-3 text-gray-600 leading-relaxed" {...props} />
                       ),
                     }}
                   >
