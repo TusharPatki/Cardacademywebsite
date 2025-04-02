@@ -177,7 +177,7 @@ export default function CardDetailsPage() {
                   <h1 className="text-3xl font-bold">{card.name}</h1>
                   {bank?.logoUrl && (
                     <img 
-                      src={bank.logoUrl} 
+                      src={bank.logoUrl.startsWith('/') ? bank.logoUrl : `/${bank.logoUrl.replace(/^\//, '')}`} 
                       alt={bank.name} 
                       className="h-10 w-auto rounded"
                     />
@@ -187,7 +187,7 @@ export default function CardDetailsPage() {
                 <div className="px-6 py-4 bg-white">
                   {card.imageUrl ? (
                     <img 
-                      src={card.imageUrl} 
+                      src={card.imageUrl.startsWith('/') ? card.imageUrl : `/${card.imageUrl.replace(/^\//, '')}`} 
                       alt={card.name} 
                       className="w-full h-auto object-contain max-h-[300px]"
                       onError={(e) => {
@@ -239,7 +239,7 @@ export default function CardDetailsPage() {
                 <div className="flex items-center mb-6">
                   {bank.logoUrl ? (
                     <img
-                      src={bank.logoUrl}
+                      src={bank.logoUrl.startsWith('/') ? bank.logoUrl : `/${bank.logoUrl.replace(/^\//, '')}`}
                       alt={bank.name}
                       className="h-10 w-auto mr-3"
                     />
@@ -478,7 +478,7 @@ export default function CardDetailsPage() {
                       {bank.logoUrl && (
                         <div className="flex justify-center mb-4">
                           <img
-                            src={bank.logoUrl}
+                            src={bank.logoUrl.startsWith('/') ? bank.logoUrl : `/${bank.logoUrl.replace(/^\//, '')}`}
                             alt={bank.name}
                             className="h-12 w-auto"
                           />

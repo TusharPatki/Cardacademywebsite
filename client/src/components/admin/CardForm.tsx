@@ -68,7 +68,7 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
     featured: z.boolean().default(false),
     cardColorFrom: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Must be a valid hex color.").default("#0F4C81"),
     cardColorTo: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Must be a valid hex color.").default("#0F4C81"),
-    imageUrl: z.string().url("Must be a valid URL.").optional().or(z.literal("")),
+    imageUrl: z.string().optional().or(z.literal("")),
     applyLink: z.string().url("Must be a valid URL.").optional().or(z.literal("")),
     publishDate: z.string(),
   });
@@ -214,6 +214,7 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
       const data = await response.json();
       
       // Update the imageUrl field with the returned URL
+      // Use the full URL path starting with the root
       form.setValue('imageUrl', data.imageUrl);
       
       toast({
@@ -562,7 +563,7 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
                 <div className="mt-2">
                   <p className="text-sm text-gray-500 mb-2">Image Preview:</p>
                   <img 
-                    src={field.value} 
+                    src={field.value.startsWith('/') ? field.value : `/${field.value.replace(/^\//, '')}`} 
                     alt="Card Preview" 
                     className="max-h-40 rounded-md border border-gray-200"
                     onError={(e) => {
