@@ -28,7 +28,7 @@ import { format } from "date-fns";
 import { type Article } from "@/lib/types";
 
 // Helper function to extract YouTube video ID from various URL formats or return the ID itself
-const extractYoutubeVideoId = (urlOrId: string): string => {
+const extractYoutubeVideoId = (urlOrId?: string): string => {
   if (!urlOrId) return '';
   
   // If it's already just an ID (no slashes or protocol)
@@ -443,7 +443,7 @@ export function ArticleForm({ article, onSuccess }: ArticleFormProps) {
                   <h4 className="text-sm font-medium mb-2">Video Preview:</h4>
                   <div>
                     <img 
-                      src={`https://img.youtube.com/vi/${extractYoutubeVideoId(form.watch("youtubeVideoId"))}/mqdefault.jpg`}
+                      src={`https://img.youtube.com/vi/${extractYoutubeVideoId(form.watch("youtubeVideoId") || '')}/mqdefault.jpg`}
                       alt="YouTube thumbnail"
                       className="rounded-md"
                     />

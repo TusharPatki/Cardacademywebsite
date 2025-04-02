@@ -46,6 +46,7 @@ export const cards = pgTable("cards", {
   youtubeVideoId: text("youtube_video_id"),
   imageUrl: text("image_url"),
   applyLink: text("apply_link"),
+  publishDate: timestamp("publish_date").defaultNow(),
 });
 
 // Articles, news and blog posts
@@ -131,6 +132,7 @@ export const insertCardSchema = createInsertSchema(cards).pick({
   youtubeVideoId: true,
   imageUrl: true,
   applyLink: true,
+  publishDate: true,
 });
 
 export const insertArticleSchema = createInsertSchema(articles).pick({

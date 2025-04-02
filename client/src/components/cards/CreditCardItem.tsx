@@ -2,8 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { InfoIcon, Star } from "lucide-react";
+import { InfoIcon, Star, ArrowRight, Calendar } from "lucide-react";
 import { type Card as CreditCard, type Bank, type Category } from "@/lib/types";
+import { format } from "date-fns";
 
 interface CreditCardItemProps {
   card: CreditCard;
@@ -72,14 +73,43 @@ export function CreditCardItem({ card, banks, showFullDetails = false }: CreditC
           )}
         </div>
         
-        <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
-          {card.rewardsDescription || "Welcome bonus and exclusive benefits"}
+        {card.imageUrl ? (
+          <div className="mb-4 flex justify-center">
+            <img 
+              src={card.imageUrl} 
+              alt={card.name} 
+              className="h-32 object-contain rounded-md"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+              }}
+            />
+          </div>
+        ) : (
+          <div className="h-32 flex items-center justify-center mb-4 bg-gray-50 rounded-md">
+            <span className="text-gray-400">{card.name}</span>
+          </div>
+        )}
+        
+        <div className="flex items-center text-sm text-gray-500 mb-2">
+          {card.publishDate && (
+            <>
+              <Calendar className="mr-2 h-4 w-4" />
+              <time dateTime={new Date(card.publishDate).toISOString()}>
+                {format(new Date(card.publishDate), "MMMM d, yyyy")}
+              </time>
+              <span className="mx-2">•</span>
+            </>
+          )}
+          <span>{categoryData?.name || "Credit Card"}</span>
+        </div>
+        
+        <h3 className="text-xl font-semibold text-gray-900 mb-3">
+          {card.name}
         </h3>
         
         <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-          {showFullDetails 
-            ? (card.rewardsDescription || "This card offers premium rewards and benefits for cardholders.") 
-            : (card.rewardsDescription || "This card offers premium rewards and benefits for cardholders.")}
+          {card.rewardsDescription || "This card offers premium rewards and benefits for cardholders."}
         </p>
         
         <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
@@ -99,7 +129,11 @@ export function CreditCardItem({ card, banks, showFullDetails = false }: CreditC
           </div>
         </div>
         
-        <div className="mt-4 pt-4 border-t border-gray-100">
+        <div className="mt-4 pt-4 border-t border-gray-100 flex flex-col gap-3">
+          <Link href={`/cards/${card.slug}`} className="text-blue-600 font-medium flex items-center gap-1 hover:text-blue-800">
+            Read More <ArrowRight className="h-4 w-4" />
+          </Link>
+          
           <Link href={card.applyLink || `/cards/${card.slug}/apply`}>
             <Button 
               className="w-full bg-blue-800 hover:bg-blue-700"
@@ -109,7 +143,7 @@ export function CreditCardItem({ card, banks, showFullDetails = false }: CreditC
             </Button>
           </Link>
           
-          <div className="mt-2 flex justify-end">
+          <div className="mt-1 flex justify-end">
             <Link href={`/cards/${card.slug}`} onClick={handleInfoClick}>
               <Button
                 size="icon"

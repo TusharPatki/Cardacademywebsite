@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
+import { format } from "date-fns";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useQuery } from "@tanstack/react-query";
 import { 
@@ -67,6 +68,7 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
     cardColorTo: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Must be a valid hex color.").default("#0F4C81"),
     imageUrl: z.string().url("Must be a valid URL.").optional().or(z.literal("")),
     applyLink: z.string().url("Must be a valid URL.").optional().or(z.literal("")),
+    publishDate: z.string(),
   });
 
   // Initialize form
@@ -89,6 +91,7 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
       cardColorTo: card.cardColorTo || "#0F4C81",
       imageUrl: card.imageUrl || "",
       applyLink: card.applyLink || "",
+      publishDate: card.publishDate ? format(new Date(card.publishDate), "yyyy-MM-dd") : format(new Date(), "yyyy-MM-dd"),
     } : {
       name: "",
       slug: "",
@@ -106,6 +109,7 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
       cardColorTo: "#0F4C81",
       imageUrl: "",
       applyLink: "",
+      publishDate: format(new Date(), "yyyy-MM-dd"),
     },
   });
 
@@ -490,6 +494,20 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
               <p className="text-sm text-gray-500 mt-1">
                 Enter the URL where users can apply for this credit card.
               </p>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="publishDate"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Publish Date</FormLabel>
+              <FormControl>
+                <Input type="date" {...field} />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
