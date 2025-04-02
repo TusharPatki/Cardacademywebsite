@@ -30,6 +30,7 @@ export interface AuthContextType {
 // API response types
 export interface ChatResponse {
   response: string;
+  citations?: string[];
 }
 
 // Combined types for displaying data

@@ -1,0 +1,326 @@
+import type { Message } from "@shared/schema";
+
+if (!process.env.PERPLEXITY_API_KEY) {
+  throw new Error("PERPLEXITY_API_KEY environment variable is required");
+}
+
+interface PerplexityResponse {
+  id: string;
+  choices: {
+    message: {
+      content: string;
+    };
+  }[];
+  citations: string[];
+}
+
+// Rate limiting configuration
+const RATE_LIMIT = {
+  windowMs: 60 * 1000, // 1 minute window
+  maxRequests: 10, // max requests per window
+  tokens: new Map<string, { count: number; resetTime: number }>(),
+};
+
+// Rate limiter function
+function checkRateLimit(): { allowed: boolean; resetTime?: Date } {
+  const now = Date.now();
+  const windowKey = Math.floor(now / RATE_LIMIT.windowMs).toString();
+
+  let tokenBucket = RATE_LIMIT.tokens.get(windowKey);
+  if (!tokenBucket) {
+    tokenBucket = { count: 0, resetTime: now + RATE_LIMIT.windowMs };
+    RATE_LIMIT.tokens.set(windowKey, tokenBucket);
+
+    // Cleanup old entries
+    Array.from(RATE_LIMIT.tokens.entries()).forEach(([key, value]) => {
+      if (value.resetTime < now) {
+        RATE_LIMIT.tokens.delete(key);
+      }
+    });
+  }
+
+  if (tokenBucket.count >= RATE_LIMIT.maxRequests) {
+    return { allowed: false, resetTime: new Date(tokenBucket.resetTime) };
+  }
+
+  tokenBucket.count++;
+  return { allowed: true };
+}
+
+// Rest of your existing constants
+const CREDIT_CARD_EXPERT_PROMPT = `You are a concise credit card expert focusing on the Indian market. ALWAYS use tables for comparisons, never use bullet points or paragraphs for comparing features.
+
+RESPONSE FORMAT RULES:
+1. ALL comparisons MUST be in table format
+2. NEVER use bullet points or paragraphs for comparisons
+3. Use tables with the following structure:
+
+### Basic Features
+| Feature | Card 1 | Card 2 |
+|---------|--------|--------|
+| Annual Fee | ₹XXX | ₹YYY |
+| Welcome Benefits | Detail | Detail |
+| Income Required | ₹XXX | ₹YYY |
+
+### Reward Rates
+| Category | Card 1 | Card 2 |
+|----------|--------|--------|
+| General Spend | X% | Y% |
+| Dining | X% | Y% |
+| Travel | X% | Y% |
+| Shopping | X% | Y% |
+
+### Additional Benefits
+| Benefit | Card 1 | Card 2 |
+|---------|--------|--------|
+| Lounge Access | Detail | Detail |
+| Insurance | Detail | Detail |
+| Offers | Detail | Detail |
+
+### Best Suited For
+| Use Case | Best Card | Reason |
+|----------|-----------|---------|
+| Overall | Name | Why |
+| Rewards | Name | Why |
+| Travel | Name | Why |
+| Shopping | Name | Why |
+
+IMPORTANT:
+- Use ₹ symbol for all amounts
+- Include actual numbers/percentages
+- Present ALL comparisons in tables
+- No bullet points or paragraphs for comparing features
+- Add table headers for each comparison section
+- Ensure proper markdown table formatting
+
+Remember to:
+- Keep Indian context central
+- Use local examples
+- Reference local regulations
+- Consider Indian spending patterns`;
+
+const OFFICIAL_BANK_DOMAINS = [
+  "cardinsider.com", // Primary source
+  "bankbazaar.com", // Secondary source
+  "hdfcbank.com",
+  "sbicard.com",
+  "icicibank.com",
+  "axisbank.com",
+  "idfcfirstbank.com",
+  "indusind.com",
+  "hsbc.co.in",
+  "sc.com",
+  "kotak.com",
+  "yesbank.in",
+  "rblbank.com",
+  "creditcardinsider.in",
+  "cardexpert.in",
+];
+
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 1000; // ms
+
+export async function generateResponse(
+  messages: { role: "user" | "assistant" | "system"; content: string }[],
+  retryCount = 0,
+): Promise<{ content: string; citations: string[] }> {
+  try {
+    // Debug message structure
+    console.log(
+      "Original message structure:",
+      JSON.stringify(messages, null, 2),
+    );
+
+    // Validate message structure before proceeding
+    if (!validateMessageStructure(messages)) {
+      throw new Error(
+        "Invalid message structure: After system messages, user and assistant roles must alternate",
+      );
+    }
+
+    // Check rate limit before making API call
+    const rateLimitCheck = checkRateLimit();
+    if (!rateLimitCheck.allowed) {
+      throw new Error(
+        `Rate limit exceeded. Please try again after ${rateLimitCheck.resetTime?.toLocaleTimeString()}`,
+      );
+    }
+
+    const modifiedMessages = messages.map((msg) => {
+      if (msg.role === "user") {
+        return {
+          ...msg,
+          content: `For Indian credit cards only: ${msg.content}`,
+        };
+      }
+      return msg;
+    });
+
+    const userQuery =
+      modifiedMessages.find((m) => m.role === "user")?.content.toLowerCase() ||
+      "";
+    const searchParams = enhanceSearchParams(userQuery);
+
+    const messagesWithSystemPrompt =
+      modifiedMessages[0]?.role === "system"
+        ? modifiedMessages
+        : [
+            { role: "system", content: CREDIT_CARD_EXPERT_PROMPT },
+            ...modifiedMessages,
+          ];
+
+    // Log final message structure being sent to API
+    console.log(
+      "Sending to Perplexity API:",
+      JSON.stringify(
+        {
+          model: "llama-3.1-sonar-small-128k-online",
+          messages: messagesWithSystemPrompt,
+          // Only include a few messages in logs to avoid clutter
+          messagesCount: messagesWithSystemPrompt.length,
+        },
+        null,
+        2,
+      ),
+    );
+
+    console.log("Sending request to Perplexity API...");
+    const response = await fetch("https://api.perplexity.ai/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.PERPLEXITY_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "llama-3.1-sonar-small-128k-online",
+        messages: messagesWithSystemPrompt,
+        temperature: 0.1,
+        top_p: 0.8,
+        max_tokens: 1000,
+        search_domain_filter: OFFICIAL_BANK_DOMAINS,
+        search_query: searchParams.searchQuery,
+        return_related_questions: false,
+        search_recency_filter: "month",
+        top_k: 12,
+        stream: false,
+        location: "in",
+        language: "en-IN",
+        region_filter: "in",
+      }),
+    });
+
+    const responseText = await response.text();
+    console.log(`API Response Status: ${response.status}`);
+
+    if (!response.ok) {
+      console.error(
+        `Perplexity API error (${response.status}): ${responseText}`,
+      );
+      throw new Error(
+        `Perplexity API error (${response.status}): ${responseText}`,
+      );
+    }
+
+    const data = JSON.parse(responseText) as PerplexityResponse;
+    console.log("Received response from Perplexity API");
+
+    // Minimal formatting - let the frontend handle it
+    const content = data.choices[0].message.content;
+
+    return {
+      content: content,
+      citations: data.citations || [],
+    };
+  } catch (error: any) {
+    console.error("Perplexity API error:", error);
+
+    if (error.message.includes("Rate limit exceeded")) {
+      throw error; // Don't retry rate limit errors
+    }
+
+    if (retryCount < MAX_RETRIES) {
+      console.log(`Retrying API call (${retryCount + 1}/${MAX_RETRIES})...`);
+      await new Promise((resolve) =>
+        setTimeout(resolve, RETRY_DELAY * (retryCount + 1)),
+      ); // Exponential backoff
+      return generateResponse(messages, retryCount + 1);
+    }
+
+    const errorMessage = error.message.includes("429")
+      ? "Service is temporarily busy. Please try again in a few moments."
+      : error.message.includes("401")
+        ? "Authentication error. Please check your API key."
+        : error.message.includes("5")
+          ? "Service is experiencing issues. Please try again later."
+          : "An unexpected error occurred. Please try again.";
+
+    throw new Error(errorMessage);
+  }
+}
+
+// Helper function to validate message structure
+function validateMessageStructure(
+  messages: { role: string; content: string }[],
+): boolean {
+  // If there are no messages, that's valid (system will add one)
+  if (messages.length === 0) return true;
+
+  // Filter out system messages
+  const nonSystemMessages = messages.filter((msg) => msg.role !== "system");
+
+  // No non-system messages is valid
+  if (nonSystemMessages.length === 0) return true;
+
+  // Check for alternating user/assistant pattern
+  for (let i = 0; i < nonSystemMessages.length - 1; i++) {
+    if (nonSystemMessages[i].role === nonSystemMessages[i + 1].role) {
+      console.error(
+        `Invalid message structure at index ${i}: ${nonSystemMessages[i].role} followed by ${nonSystemMessages[i + 1].role}`,
+      );
+      return false;
+    }
+  }
+
+  // Make sure the last message is from user (as required by Perplexity)
+  if (
+    nonSystemMessages.length > 0 &&
+    nonSystemMessages[nonSystemMessages.length - 1].role !== "user"
+  ) {
+    console.error("Last message must be from user");
+    return false;
+  }
+
+  return true;
+}
+
+function enhanceSearchParams(query: string): { searchQuery: string } {
+  const baseSearchTerms = "latest Indian credit cards";
+  let additionalTerms = "";
+
+  if (query.includes("vs") || query.includes("compare")) {
+    const cards = query.split(/vs|compare|and/).map((card) => card.trim());
+    additionalTerms = `compare ${cards.join(" vs ")} detailed features benefits india`;
+  } else if (query.includes("cashback")) {
+    additionalTerms =
+      "highest cashback rewards Indian credit cards latest offers";
+  } else if (query.includes("travel") || query.includes("lounge")) {
+    additionalTerms =
+      "best Indian airport lounge access credit cards international travel benefits";
+  } else if (query.includes("premium") || query.includes("lifestyle")) {
+    additionalTerms =
+      "top Indian premium credit cards exclusive lifestyle benefits luxury privileges";
+  } else if (query.includes("business")) {
+    additionalTerms =
+      "best Indian business credit cards corporate benefits GST features";
+  } else if (query.includes("first") || query.includes("new")) {
+    additionalTerms =
+      "best first credit cards India beginners no credit history";
+  } else if (query.includes("reward")) {
+    additionalTerms =
+      "highest reward rate Indian credit cards points multipliers";
+  }
+
+  return {
+    searchQuery: `${baseSearchTerms} ${additionalTerms} (site:cardinsider.com OR site:bankbazaar.com OR site:cardexpert.in)`,
+  };
+}

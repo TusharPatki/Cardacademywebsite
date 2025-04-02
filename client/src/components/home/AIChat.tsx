@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
@@ -7,10 +7,12 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { type ChatResponse } from "@/lib/types";
+import ReactMarkdown from "react-markdown";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
+  citations?: string[];
 }
 
 export function AIChat() {
@@ -23,6 +25,17 @@ export function AIChat() {
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    if (scrollAreaRef.current) {
+      const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+      if (scrollContainer) {
+        scrollContainer.scrollTop = scrollContainer.scrollHeight;
+      }
+    }
+  }, [messages]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +60,11 @@ export function AIChat() {
       // Add assistant response to chat
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: data.response },
+        { 
+          role: "assistant", 
+          content: data.response,
+          citations: data.citations 
+        },
       ]);
     } catch (error) {
       console.error("Chat error:", error);
@@ -79,7 +96,7 @@ export function AIChat() {
         </Button>
       </CardHeader>
       
-      <ScrollArea className="h-64 p-4 bg-gray-50">
+      <ScrollArea ref={scrollAreaRef} className="h-64 p-4 bg-gray-50">
         {messages.map((message, index) => (
           <div
             key={index}
@@ -98,12 +115,29 @@ export function AIChat() {
                 )}
               </div>
             </div>
-            <div className={`p-3 rounded-lg shadow-sm max-w-xs ${
+            <div className={`p-3 rounded-lg shadow-sm max-w-md ${
               message.role === "user" 
                 ? "bg-primary text-white" 
                 : "bg-white text-gray-800"
             }`}>
-              <p>{message.content}</p>
+              {message.role === "user" ? (
+                <p>{message.content}</p>
+              ) : (
+                <div className="prose prose-sm max-w-none">
+                  <ReactMarkdown>{message.content}</ReactMarkdown>
+                  
+                  {message.citations && message.citations.length > 0 && (
+                    <div className="mt-2 text-xs text-gray-500">
+                      <p className="font-medium">Sources:</p>
+                      <ul className="list-disc pl-4">
+                        {message.citations.map((citation, i) => (
+                          <li key={i}>{citation}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         ))}

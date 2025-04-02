@@ -556,7 +556,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // AI Chat mock endpoint
+  // AI Chat using Gemini API
   app.post("/api/chat", async (req, res) => {
     try {
       const { message } = req.body;
@@ -564,20 +564,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!message || typeof message !== 'string') {
         return res.status(400).json({ message: "Invalid input" });
       }
-      
-      // Simple mock response
-      let response;
-      if (message.toLowerCase().includes("cashback")) {
-        response = "Based on your interest in cashback cards, I recommend the Citi Double Cash Card which offers 2% on all purchases (1% when you buy, 1% when you pay) with no annual fee.";
-      } else if (message.toLowerCase().includes("travel")) {
-        response = "For travel benefits, the Chase Sapphire Preferred is an excellent choice with a $95 annual fee but offering 2x points on travel and dining, and a great sign-up bonus.";
-      } else if (message.toLowerCase().includes("credit score")) {
-        response = "To improve your credit score, focus on paying bills on time, keeping credit utilization low, and monitoring your credit report for errors.";
-      } else {
-        response = "I can help you find the perfect credit card! Tell me more about what you're looking for - cashback, travel rewards, or building credit?";
+
+      try {
+        // Import the generateResponse function from gemini.ts
+        const { generateResponse } = await import('./gemini');
+        
+        // Call Gemini API to generate response
+        const result = await generateResponse([
+          { role: "user", content: message }
+        ]);
+        
+        return res.status(200).json({ 
+          response: result.content,
+          citations: result.citations 
+        });
+      } catch (error: any) {
+        console.error("Gemini API error:", error);
+        
+        // Fallback response if API call fails
+        if (error.message.includes("Rate limit exceeded")) {
+          return res.status(429).json({ 
+            response: "I'm currently receiving too many requests. Please try again in a minute." 
+          });
+        }
+        
+        // Handle other API errors gracefully
+        return res.status(200).json({ 
+          response: "I'm having trouble connecting to my knowledge base right now. Let me help you with some general advice about credit cards. What specific features are you looking for?"
+        });
       }
       
-      return res.status(200).json({ response });
+      return res.status(200).json({ response: message });
     } catch (error) {
       console.error("Chat error:", error);
       return res.status(500).json({ message: "Server error" });
