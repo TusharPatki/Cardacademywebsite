@@ -9,6 +9,7 @@ import {
   LogOut,
   Menu,
   X,
+  ListChecks,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { apiRequest } from "@/lib/queryClient";
@@ -64,6 +65,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const navItems = [
     { href: "/admin", label: "Dashboard", icon: <LayoutDashboard className="h-5 w-5 mr-2" /> },
     { href: "/admin/cards", label: "Credit Cards", icon: <CreditCard className="h-5 w-5 mr-2" /> },
+    { href: "/admin/categories", label: "Categories", icon: <ListChecks className="h-5 w-5 mr-2" /> },
     { href: "/admin/banks", label: "Partner Banks", icon: <Building className="h-5 w-5 mr-2" /> },
     { href: "/admin/articles", label: "Articles", icon: <FileText className="h-5 w-5 mr-2" /> },
   ];

@@ -17,6 +17,7 @@ import CalculatorsPage from "@/pages/CalculatorsPage";
 import AdminLoginPage from "@/pages/AdminLoginPage";
 import AdminDashboardPage from "@/pages/AdminDashboardPage";
 import AdminCardsPage from "@/pages/AdminCardsPage";
+import AdminCategoriesPage from "@/pages/AdminCategoriesPage";
 import AdminBanksPage from "@/pages/AdminBanksPage";
 import AdminArticlesPage from "@/pages/AdminArticlesPage";
 import NotFound from "@/pages/not-found";
@@ -41,6 +42,7 @@ function Router() {
       <Route path="/admin/cards" component={AdminCardsPage} />
       <Route path="/admin/cards/new" component={() => <AdminCardsPage mode="new" />} />
       <Route path="/admin/cards/edit/:id" component={AdminCardsPage} />
+      <Route path="/admin/categories" component={AdminCategoriesPage} />
       <Route path="/admin/banks" component={AdminBanksPage} />
       <Route path="/admin/banks/new" component={() => <AdminBanksPage mode="new" />} />
       <Route path="/admin/banks/edit/:id" component={AdminBanksPage} />
