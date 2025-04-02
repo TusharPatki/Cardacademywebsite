@@ -18,7 +18,7 @@ export function Hero() {
               <Link href="/cards">
                 <Button
                   size="lg"
-                  className="font-medium bg-white text-primary-700 hover:bg-gray-100"
+                  className="font-medium bg-white text-black hover:bg-gray-100"
                 >
                   Browse Cards
                 </Button>
@@ -27,7 +27,7 @@ export function Hero() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="font-medium text-white border-white hover:bg-primary-700"
+                  className="font-medium text-black border-white hover:bg-primary-700"
                 >
                   Ask Our AI Assistant
                 </Button>
