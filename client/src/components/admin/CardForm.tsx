@@ -65,6 +65,8 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
     featured: z.boolean().default(false),
     cardColorFrom: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Must be a valid hex color.").default("#0F4C81"),
     cardColorTo: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Must be a valid hex color.").default("#0F4C81"),
+    imageUrl: z.string().url("Must be a valid URL.").optional().or(z.literal("")),
+    applyLink: z.string().url("Must be a valid URL.").optional().or(z.literal("")),
   });
 
   // Initialize form
@@ -85,6 +87,8 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
       featured: card.featured === true,
       cardColorFrom: card.cardColorFrom || "#0F4C81",
       cardColorTo: card.cardColorTo || "#0F4C81",
+      imageUrl: card.imageUrl || "",
+      applyLink: card.applyLink || "",
     } : {
       name: "",
       slug: "",
@@ -100,6 +104,8 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
       featured: false,
       cardColorFrom: "#0F4C81",
       cardColorTo: "#0F4C81",
+      imageUrl: "",
+      applyLink: "",
     },
   });
 
@@ -442,6 +448,46 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
           )}
         />
         
+        <FormField
+          control={form.control}
+          name="imageUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Card Image URL</FormLabel>
+              <FormControl>
+                <Input 
+                  placeholder="e.g. https://example.com/card-image.jpg" 
+                  {...field} 
+                />
+              </FormControl>
+              <p className="text-sm text-gray-500 mt-1">
+                Enter the URL for the card image (recommended size: 800x450px).
+              </p>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="applyLink"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Apply Link</FormLabel>
+              <FormControl>
+                <Input 
+                  placeholder="e.g. https://example.com/apply-for-card" 
+                  {...field} 
+                />
+              </FormControl>
+              <p className="text-sm text-gray-500 mt-1">
+                Enter the URL where users can apply for this credit card.
+              </p>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="youtubeVideoId"

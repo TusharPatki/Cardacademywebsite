@@ -44,6 +44,8 @@ export const cards = pgTable("cards", {
   cardColorTo: text("card_color_to").default("#0F4C81"),
   contentHtml: text("content_html"),
   youtubeVideoId: text("youtube_video_id"),
+  imageUrl: text("image_url"),
+  applyLink: text("apply_link"),
 });
 
 // Articles, news and blog posts
@@ -127,6 +129,8 @@ export const insertCardSchema = createInsertSchema(cards).pick({
   cardColorTo: true,
   contentHtml: true,
   youtubeVideoId: true,
+  imageUrl: true,
+  applyLink: true,
 });
 
 export const insertArticleSchema = createInsertSchema(articles).pick({

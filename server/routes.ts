@@ -11,6 +11,14 @@ import {
 } from "@shared/schema";
 import session from "express-session";
 
+// Extend Express session with our custom properties
+declare module "express-session" {
+  interface SessionData {
+    userId?: number;
+    isAdmin?: boolean;
+  }
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Configure session middleware
   app.use(
@@ -183,10 +191,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/banks/:id", async (req, res) => {
+  app.get("/api/banks/:idOrSlug", async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
-      const bank = await storage.getBank(id);
+      const idOrSlug = req.params.idOrSlug;
+      let bank;
+
+      // First try to parse as integer for ID lookup
+      const id = parseInt(idOrSlug);
+      if (!isNaN(id)) {
+        bank = await storage.getBank(id);
+      } else {
+        // If not a valid ID, treat as slug
+        bank = await storage.getBankBySlug(idOrSlug);
+      }
       
       if (!bank) {
         return res.status(404).json({ message: "Bank not found" });
@@ -275,10 +292,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/cards/:id", async (req, res) => {
+  app.get("/api/cards/:idOrSlug", async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
-      const card = await storage.getCard(id);
+      const idOrSlug = req.params.idOrSlug;
+      let card;
+
+      // First try to parse as integer for ID lookup
+      const id = parseInt(idOrSlug);
+      if (!isNaN(id)) {
+        card = await storage.getCard(id);
+      } else {
+        // If not a valid ID, treat as slug
+        card = await storage.getCardBySlug(idOrSlug);
+      }
       
       if (!card) {
         return res.status(404).json({ message: "Card not found" });
@@ -363,10 +389,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/articles/:id", async (req, res) => {
+  app.get("/api/articles/:idOrSlug", async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
-      const article = await storage.getArticle(id);
+      const idOrSlug = req.params.idOrSlug;
+      let article;
+
+      // First try to parse as integer for ID lookup
+      const id = parseInt(idOrSlug);
+      if (!isNaN(id)) {
+        article = await storage.getArticle(id);
+      } else {
+        // If not a valid ID, treat as slug
+        article = await storage.getArticleBySlug(idOrSlug);
+      }
       
       if (!article) {
         return res.status(404).json({ message: "Article not found" });
@@ -443,10 +478,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/calculators/:id", async (req, res) => {
+  app.get("/api/calculators/:idOrSlug", async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
-      const calculator = await storage.getCalculator(id);
+      const idOrSlug = req.params.idOrSlug;
+      let calculator;
+
+      // First try to parse as integer for ID lookup
+      const id = parseInt(idOrSlug);
+      if (!isNaN(id)) {
+        calculator = await storage.getCalculator(id);
+      } else {
+        // If not a valid ID, treat as slug
+        calculator = await storage.getCalculatorBySlug(idOrSlug);
+      }
       
       if (!calculator) {
         return res.status(404).json({ message: "Calculator not found" });

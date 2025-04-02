@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRoute } from "wouter";
 import { Layout } from "@/components/layout/Layout";
@@ -14,8 +15,24 @@ import {
   TabsList,
   TabsTrigger,
   TabsContent,
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
 } from "@/components/ui";
-import { Star, ArrowLeft, CreditCard as CreditCardIcon, DollarSign, Percent, AlertCircle } from "lucide-react";
+import { 
+  Star, 
+  ArrowLeft, 
+  CreditCard as CreditCardIcon, 
+  DollarSign, 
+  Percent, 
+  AlertCircle, 
+  Info, 
+  ExternalLink
+} from "lucide-react";
 import { type Card as CreditCard, type Bank } from "@/lib/types";
 import { Link } from "wouter";
 
@@ -37,6 +54,8 @@ export default function CardDetailsPage() {
     queryKey: ['/api/cards', { categoryId: card?.categoryId }],
     enabled: !!card?.categoryId,
   });
+  
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   if (isLoadingCard) {
     return (
@@ -106,7 +125,19 @@ export default function CardDetailsPage() {
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">{card.name}</h1>
+              <div className="flex justify-between items-center mb-4">
+                <h1 className="text-3xl font-bold text-gray-900">{card.name}</h1>
+                {card.contentHtml && (
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    onClick={() => setDialogOpen(true)}
+                    title="View detailed information about this card"
+                  >
+                    <Info className="h-5 w-5" />
+                  </Button>
+                )}
+              </div>
               
               {bank && (
                 <div className="flex items-center mb-6">
@@ -125,28 +156,38 @@ export default function CardDetailsPage() {
                 </div>
               )}
               
-              <div 
-                className="p-6 rounded-lg text-white mb-8 h-56 flex flex-col justify-between"
-                style={{
-                  background: `linear-gradient(to right, ${card.cardColorFrom || '#0F4C81'}, ${card.cardColorTo || '#0F4C81'})`
-                }}
-              >
-                <div className="flex justify-between items-start">
-                  <h2 className="text-xl font-semibold">{card.name}</h2>
-                  {bank && bank.logoUrl && (
-                    <img
-                      src={bank.logoUrl}
-                      alt={bank.name}
-                      className="h-8 w-auto rounded"
-                    />
-                  )}
+              {card.imageUrl ? (
+                <div className="mb-8 rounded-lg overflow-hidden shadow-md">
+                  <img 
+                    src={card.imageUrl} 
+                    alt={card.name}
+                    className="w-full h-auto object-cover"
+                  />
                 </div>
-                <div className="mt-auto">
-                  <div className="text-lg font-semibold">
-                    {card.rewardsDescription ? card.rewardsDescription.split('.')[0] : 'Rewards details'}
+              ) : (
+                <div 
+                  className="p-6 rounded-lg text-white mb-8 h-56 flex flex-col justify-between shadow-md"
+                  style={{
+                    background: `linear-gradient(to right, ${card.cardColorFrom || '#0F4C81'}, ${card.cardColorTo || '#0F4C81'})`
+                  }}
+                >
+                  <div className="flex justify-between items-start">
+                    <h2 className="text-xl font-semibold">{card.name}</h2>
+                    {bank && bank.logoUrl && (
+                      <img
+                        src={bank.logoUrl}
+                        alt={bank.name}
+                        className="h-8 w-auto rounded"
+                      />
+                    )}
+                  </div>
+                  <div className="mt-auto">
+                    <div className="text-lg font-semibold">
+                      {card.rewardsDescription ? card.rewardsDescription.split('.')[0] : 'Rewards details'}
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
               
               <Tabs defaultValue="details">
                 <TabsList className="mb-6">
@@ -342,9 +383,17 @@ export default function CardDetailsPage() {
                     </p>
                     
                     <div className="flex justify-center">
-                      <Button className="w-full" size="lg">
-                        Apply Now
-                      </Button>
+                      <a 
+                        href={card.applyLink || "#"}
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="w-full"
+                      >
+                        <Button className="w-full" size="lg" disabled={!card.applyLink}>
+                          <ExternalLink className="mr-2 h-4 w-4" />
+                          Apply Now
+                        </Button>
+                      </a>
                     </div>
                     
                     <div className="text-sm text-gray-500">
@@ -404,6 +453,29 @@ export default function CardDetailsPage() {
       </div>
       
       <Newsletter />
+      
+      {/* Dialog for card info button */}
+      {card.contentHtml && (
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>{card.name} - Complete Details</DialogTitle>
+              <DialogDescription>
+                Detailed information about features, benefits, and terms.
+              </DialogDescription>
+            </DialogHeader>
+            <div 
+              className="prose prose-blue max-w-none mt-4"
+              dangerouslySetInnerHTML={{ __html: card.contentHtml }}
+            />
+            <DialogFooter className="mt-6">
+              <Button onClick={() => setDialogOpen(false)}>
+                Close
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </Layout>
   );
 }
