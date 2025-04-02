@@ -13,10 +13,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-1">
             <div className="flex items-center">
-              <img src="/src/assets/logo.png" alt="CardAcademy" className="h-8 w-auto mr-2 brightness-200" />
-              <span className="text-white font-bold text-2xl">
-                Card<span className="text-blue-400">Academy</span>
-              </span>
+              <img src="/images/credit-card-logo.jpg" alt="Credit Card Advisor" className="h-10 w-auto mr-2 brightness-200" />
             </div>
             <p className="mt-4 text-base text-gray-400">
               Your educational platform for credit cards, financial knowledge, and expert advice.
@@ -185,7 +182,7 @@ export function Footer() {
 
         <div className="mt-12 border-t border-gray-800 pt-8">
           <p className="text-base text-gray-400 text-center">
-            &copy; {new Date().getFullYear()} CardAcademy. All rights reserved. CardAcademy is not a lender and does not make credit decisions.
+            &copy; {new Date().getFullYear()} Credit Card Advisor. All rights reserved. Credit Card Advisor is not a lender and does not make credit decisions.
           </p>
           <p className="text-sm text-gray-500 text-center mt-2">
             The information provided is for educational purposes only. Contact the card issuer for complete and current rates, fees, and terms.

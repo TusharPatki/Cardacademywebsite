@@ -41,7 +41,7 @@ export default function AiAssistantPage() {
             <div className="lg:col-span-2">
               <Card className="shadow-lg h-full">
                 <CardHeader>
-                  <CardTitle>Ask CardSavvy AI</CardTitle>
+                  <CardTitle>Ask Credit Card Advisor AI</CardTitle>
                   <CardDescription>
                     Our AI assistant can help you find the perfect credit card, understand credit card terms, and answer financial questions.
                   </CardDescription>

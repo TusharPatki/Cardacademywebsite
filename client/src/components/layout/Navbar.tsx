@@ -61,10 +61,7 @@ export function Navbar() {
             <Link href="/">
               <a className="flex-shrink-0 flex items-center">
                 <div className="flex items-center">
-                  <img src="/logo.png" alt="CardAcademy" className="h-8 w-auto mr-2" />
-                  <span className="text-primary font-bold text-2xl">
-                    Card<span className="text-blue-900">Academy</span>
-                  </span>
+                  <img src="/images/credit-card-logo.jpg" alt="Credit Card Advisor" className="h-12 w-auto" />
                 </div>
               </a>
             </Link>
@@ -120,9 +117,7 @@ export function Navbar() {
                 <div className="flex flex-col h-full">
                   <div className="flex items-center justify-between py-4 border-b">
                     <Link href="/" onClick={() => setIsOpen(false)}>
-                      <span className="text-primary font-bold text-2xl">
-                        Card<span className="text-accent">Savvy</span>
-                      </span>
+                      <img src="/images/credit-card-logo.jpg" alt="Credit Card Advisor" className="h-10 w-auto" />
                     </Link>
                     <Button
                       variant="ghost"

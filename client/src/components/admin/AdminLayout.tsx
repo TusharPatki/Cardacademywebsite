@@ -76,7 +76,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           <div className="flex items-center">
             <Link href="/admin">
               <a className="text-xl font-bold text-primary">
-                CardSavvy Admin
+                Credit Card Advisor Admin
               </a>
             </Link>
           </div>
@@ -92,7 +92,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 <div className="flex flex-col h-full">
                   <div className="flex items-center justify-between py-4 border-b">
                     <span className="text-xl font-bold text-primary">
-                      CardSavvy Admin
+                      Credit Card Advisor Admin
                     </span>
                     <Button
                       variant="ghost"
