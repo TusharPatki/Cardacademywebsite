@@ -95,57 +95,58 @@ export default function CardsPage() {
             </p>
           </div>
           
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle>Credit Card Filters</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                  <Tabs 
-                    defaultValue="all" 
-                    onValueChange={(value) => setActiveCategory(value === "all" ? null : parseInt(value))}
-                    className="w-full"
+          <div className="mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
+              <div>
+                <h3 className="text-xl font-medium text-gray-700 mb-4">Category</h3>
+                <div className="flex flex-col space-y-2">
+                  <Button 
+                    variant={activeCategory === null ? "default" : "outline"} 
+                    className={`justify-start h-12 ${activeCategory === null ? "bg-gray-100 text-black hover:bg-gray-200" : "bg-white"}`}
+                    onClick={() => setActiveCategory(null)}
                   >
-                    <TabsList className="grid grid-cols-2 md:flex md:flex-wrap">
-                      <TabsTrigger value="all">All</TabsTrigger>
-                      {categories?.map((category) => (
-                        <TabsTrigger key={category.id} value={category.id.toString()}>
-                          {category.name}
-                        </TabsTrigger>
-                      ))}
-                    </TabsList>
-                  </Tabs>
+                    All
+                  </Button>
+                  {categories?.map((category) => (
+                    <Button
+                      key={category.id}
+                      variant={activeCategory === category.id ? "default" : "outline"}
+                      className={`justify-start h-12 ${activeCategory === category.id ? "bg-gray-100 text-black hover:bg-gray-200" : "bg-white"}`}
+                      onClick={() => setActiveCategory(category.id)}
+                    >
+                      {category.name}
+                    </Button>
+                  ))}
                 </div>
+              </div>
+              
+              <div>
+                <h3 className="text-xl font-medium text-gray-700 mb-4">Bank</h3>
+                <Select
+                  value={selectedBank}
+                  onValueChange={setSelectedBank}
+                >
+                  <SelectTrigger className="h-12 text-lg border-2">
+                    <SelectValue placeholder="All Banks" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Banks</SelectItem>
+                    {banks?.map((bank) => (
+                      <SelectItem key={bank.id} value={bank.id.toString()}>
+                        {bank.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Bank</label>
-                  <Select
-                    value={selectedBank}
-                    onValueChange={setSelectedBank}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="All Banks" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Banks</SelectItem>
-                      {banks?.map((bank) => (
-                        <SelectItem key={bank.id} value={bank.id.toString()}>
-                          {bank.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Annual Fee</label>
+                {/* Additional filters - hidden for simplicity based on screenshot */}
+                <div className="hidden">
+                  <h3 className="text-xl font-medium text-gray-700 mb-4 mt-6">Annual Fee</h3>
                   <Select
                     value={selectedFee}
                     onValueChange={setSelectedFee}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="h-12 text-lg border-2">
                       <SelectValue placeholder="Annual Fee" />
                     </SelectTrigger>
                     <SelectContent>
@@ -156,15 +157,13 @@ export default function CardsPage() {
                       <SelectItem value="300-plus">$300+</SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
                 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Sort By</label>
+                  <h3 className="text-xl font-medium text-gray-700 mb-4 mt-6">Sort By</h3>
                   <Select
                     value={sortOption}
                     onValueChange={setSortOption}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="h-12 text-lg border-2">
                       <SelectValue placeholder="Sort By" />
                     </SelectTrigger>
                     <SelectContent>
@@ -176,26 +175,26 @@ export default function CardsPage() {
                   </Select>
                 </div>
               </div>
-              
-              {/* Reset filters button */}
-              {(activeCategory !== null || selectedBank !== "all" || selectedFee !== "all" || sortOption !== "recommended") && (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="mt-4"
-                  onClick={() => {
-                    setActiveCategory(null);
-                    setSelectedBank("all");
-                    setSelectedFee("all");
-                    setSortOption("recommended");
-                  }}
-                >
-                  <Filter className="h-4 w-4 mr-2" />
-                  Reset Filters
-                </Button>
-              )}
-            </CardContent>
-          </Card>
+            </div>
+            
+            {/* Reset filters button */}
+            {(activeCategory !== null || selectedBank !== "all" || selectedFee !== "all" || sortOption !== "recommended") && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="mt-4"
+                onClick={() => {
+                  setActiveCategory(null);
+                  setSelectedBank("all");
+                  setSelectedFee("all");
+                  setSortOption("recommended");
+                }}
+              >
+                <Filter className="h-4 w-4 mr-2" />
+                Reset Filters
+              </Button>
+            )}
+          </div>
           
           {/* Results count */}
           <div className="flex justify-between items-center mb-6">
