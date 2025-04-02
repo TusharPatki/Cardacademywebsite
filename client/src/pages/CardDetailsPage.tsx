@@ -143,15 +143,34 @@ export default function CardDetailsPage() {
                   )}
                 </div>
                 
-                {card.imageUrl && (
-                  <div className="px-6 py-4 bg-white">
+                <div className="px-6 py-4 bg-white">
+                  {card.imageUrl ? (
                     <img 
                       src={card.imageUrl} 
                       alt={card.name} 
                       className="w-full h-auto object-contain max-h-[300px]"
+                      onError={(e) => {
+                        // If image fails to load, replace with card name
+                        const target = e.target as HTMLImageElement;
+                        target.onerror = null; // Prevent infinite error loop
+                        target.alt = card.name || "Credit Card";
+                        // Add a card name as fallback text
+                        target.style.display = "none";
+                        const parent = target.parentElement;
+                        if (parent) {
+                          const fallbackText = document.createElement("div");
+                          fallbackText.className = "py-4 text-center text-gray-700";
+                          fallbackText.innerText = card.name || "Credit Card";
+                          parent.appendChild(fallbackText);
+                        }
+                      }}
                     />
-                  </div>
-                )}
+                  ) : (
+                    <div className="py-4 text-center text-gray-700">
+                      {card.name || "Credit Card"}
+                    </div>
+                  )}
+                </div>
               </div>
               
               <div className="flex justify-between items-center mb-4">
@@ -192,12 +211,12 @@ export default function CardDetailsPage() {
                 </div>
               )}
               
-              <Tabs defaultValue="details">
-                <TabsList className="mb-6">
-                  <TabsTrigger value="details">Card Details</TabsTrigger>
-                  <TabsTrigger value="benefits">Benefits & Features</TabsTrigger>
-                  <TabsTrigger value="rates">Rates & Fees</TabsTrigger>
-                  {card.contentHtml && <TabsTrigger value="full-content">Full Details</TabsTrigger>}
+              <Tabs defaultValue="details" className="mt-4">
+                <TabsList className="mb-6 bg-white w-full flex space-x-2 p-1 rounded-lg border border-gray-200">
+                  <TabsTrigger value="details" className="flex-1 rounded-md py-2">Card Details</TabsTrigger>
+                  <TabsTrigger value="benefits" className="flex-1 rounded-md py-2">Benefits & Features</TabsTrigger>
+                  <TabsTrigger value="rates" className="flex-1 rounded-md py-2">Rates & Fees</TabsTrigger>
+                  {card.contentHtml && <TabsTrigger value="full-content" className="flex-1 rounded-md py-2">Full Details</TabsTrigger>}
                 </TabsList>
                 
                 <TabsContent value="details">
