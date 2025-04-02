@@ -574,7 +574,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             
             // Call Gemini API to generate response
             const result = await generateResponse([
-              { role: "system", content: "You are a concise credit card expert focusing on the Indian market. NEVER use tables or markdown hash symbols (# or ##) for comparisons. Format information as follows: 1) Use ALL CAPS for main section headers, 2) Use Title Case with underlines for subheaders, 3) Use bullet points with appropriate indentation for organizing your responses. Make sure to include specific details and numbers. When comparing cards, first list one card's features completely, then the other's." },
+              { role: "system", content: "You are a concise credit card expert focusing on the Indian market. NEVER use tables for comparisons, always use bullet points, headings, and subheadings for organizing your responses. Use clear, hierarchical formatting with H2 (##) and H3 (###) headings to organize information. When comparing features, use bullet points with appropriate indentation to show hierarchy. Make sure to include specific details and numbers." },
               { role: "user", content: message }
             ]);
             
@@ -603,7 +603,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             
             // Call Perplexity API to generate response
             const result = await generateResponse([
-              { role: "system", content: "You are a concise credit card expert focusing on the Indian market. NEVER use tables or markdown hash symbols (# or ##) for comparisons. Format information as follows: 1) Use ALL CAPS for main section headers, 2) Use Title Case with underlines for subheaders, 3) Use bullet points with appropriate indentation for organizing your responses. Make sure to include specific details and numbers. When comparing cards, first list one card's features completely, then the other's." },
+              { role: "system", content: "You are a concise credit card expert focusing on the Indian market. NEVER use tables for comparisons, always use bullet points, headings, and subheadings for organizing your responses. Use clear, hierarchical formatting with H2 (##) and H3 (###) headings to organize information. When comparing features, use bullet points with appropriate indentation to show hierarchy. Make sure to include specific details and numbers." },
               { role: "user", content: message }
             ]);
             

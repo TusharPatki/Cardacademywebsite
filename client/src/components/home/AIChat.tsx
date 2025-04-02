@@ -43,15 +43,7 @@ export function AIChat() {
   const enhanceMarkdown = (content: string): string => {
     let enhanced = content;
     
-    // Format main section headers in ALL CAPS to be bold and larger font
-    // This captures lines that are entirely in uppercase with possible spaces
-    const allCapsRegex = /^([A-Z][A-Z\s]+[A-Z]):?$/gm;
-    enhanced = enhanced.replace(allCapsRegex, '<div style="font-size: 1.25rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.75rem; color: #111827;">$1</div>');
-    
-    // Format <u> tags as subheaders with styling
-    enhanced = enhanced.replace(/<u>(.*?)<\/u>/g, '<div style="font-size: 1.1rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.5rem; color: #374151; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.25rem;">$1</div>');
-    
-    // Fix table formatting if tables exist
+    // Fix table formatting issues - better detection of tables
     const tableRegex = /(?:###\s*.*)\n*(\|[^\n]+\|[^\n]*\n\|[-:\|\s]+\|[^\n]*\n(?:\|[^\n]+\|[^\n]*\n)+)/g;
     enhanced = enhanced.replace(tableRegex, (match) => {
       // Extract table title
@@ -72,32 +64,30 @@ export function AIChat() {
         .replace(/\| *([^|]*[^ ]) *\|/g, '| $1 |') // Clean up spacing inside cells
         .trim();
       
-      // Rebuild formatted table with styled header
-      return `<div style="font-size: 1.1rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem;">${title}</div>\n\n${tableContent}\n`;
+      // Rebuild formatted table with title
+      return `### ${title}\n\n${tableContent}\n`;
     });
     
     // Handle "Best Suited For" tables which seem to have formatting issues
     const bestSuitedForRegex = /(?:##?\s*#?\s*Best Suited For[^\n]*\n+)(\|[^\n]+\|[^\n]*\n\|[-:\|\s]+\|[^\n]*\n)?(.+)/g;
     enhanced = enhanced.replace(bestSuitedForRegex, (match, tableDef, content) => {
-      const title = '<div style="font-size: 1.1rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem;">Best Suited For</div>';
+      const title = '### Best Suited For';
       
       // If no proper table definition, try to format the content as a table
       if (!tableDef || !tableDef.includes('|')) {
         // Attempt to fix malformed table by extracting data
-        const rows = content.split('||').filter((row: string) => row.trim());
+        const rows = content.split('||').filter(row => row.trim());
         
         if (rows.length > 0) {
           let fixedTable = '| Use Case | Best Card | Reason |\n|----------|-----------|--------|\n';
           
           for (const row of rows) {
             // Extract data from row using regex
-            const parts = row.split('|').filter((part: string) => part.trim());
+            const parts = row.split('|').filter(part => part.trim());
             if (parts.length >= 3) {
               fixedTable += `| ${parts[0].trim()} | ${parts[1].trim()} | ${parts[2].trim()} |\n`;
             } else if (parts.length === 2) {
               fixedTable += `| ${parts[0].trim()} | ${parts[1].trim()} | - |\n`;
-            } else if (parts.length === 1) {
-              fixedTable += `| ${parts[0].trim()} | - | - |\n`;
             }
           }
           
@@ -108,10 +98,10 @@ export function AIChat() {
       return match; // Return original if we can't fix it
     });
     
-    // Replace markdown headings with styled divs
-    enhanced = enhanced.replace(/^###\s+(.+)$/gm, '<div style="font-size: 1.1rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem;">$1</div>');
-    enhanced = enhanced.replace(/^##\s+(.+)$/gm, '<div style="font-size: 1.15rem; font-weight: 600; margin-top: 1.2rem; margin-bottom: 0.6rem;">$1</div>');
-    enhanced = enhanced.replace(/^#\s+(.+)$/gm, '<div style="font-size: 1.2rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.8rem;">$1</div>');
+    // Fix headings without proper spacing
+    enhanced = enhanced.replace(/###([^\n]+)/g, '### $1');
+    enhanced = enhanced.replace(/##([^\n]+)/g, '## $1');
+    enhanced = enhanced.replace(/#([^\n]+)/g, '# $1');
     
     // Ensure proper spacing around list items
     enhanced = enhanced.replace(/\n-([^\n]+)/g, '\n- $1');
@@ -245,17 +235,11 @@ export function AIChat() {
                           </code>
                         );
                       },
-                      h1: ({ node, ...props }) => (
-                        <div className="text-xl font-bold mt-6 mb-3 text-gray-900" {...props} />
-                      ),
-                      h2: ({ node, ...props }) => (
-                        <div className="text-lg font-bold mt-5 mb-2 text-gray-900" {...props} />
-                      ),
                       h3: ({ node, ...props }) => (
-                        <div className="text-lg font-semibold mt-4 mb-2 text-gray-800" {...props} />
+                        <h3 className="text-lg font-semibold mt-6 mb-2 text-gray-800" {...props} />
                       ),
                       h4: ({ node, ...props }) => (
-                        <div className="text-base font-semibold mt-3 mb-1 text-gray-800" {...props} />
+                        <h4 className="text-base font-semibold mt-4 mb-2 text-gray-800" {...props} />
                       ),
                       p: ({ node, ...props }) => (
                         <p className="my-2" {...props} />

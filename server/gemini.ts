@@ -53,35 +53,33 @@ function checkRateLimit(): { allowed: boolean; resetTime?: Date } {
 }
 
 // Credit card expert prompt
-const CREDIT_CARD_EXPERT_PROMPT = `You are a concise credit card expert focusing on the Indian market. NEVER use tables or markdown hash symbols (# or ##) for comparisons.
+const CREDIT_CARD_EXPERT_PROMPT = `You are a concise credit card expert focusing on the Indian market. NEVER use tables for comparisons, always use bullet points, headings, and subheadings for organizing your responses.
 
 RESPONSE FORMAT RULES:
-1. NEVER use tables or markdown hash symbols (# or ##) for comparisons
-2. Format information as follows: 
-   - Use ALL CAPS for main section headers
-   - Use Title Case with underlines for subheaders
-   - Use bullet points with appropriate indentation for organizing your responses
+1. NEVER use tables for comparisons
+2. ALWAYS use bullet points and hierarchical headings for structured information
+3. Use clear, hierarchical formatting with markdown headings:
 
-BASIC FEATURES
+## Basic Features 
 For each card, include:
 - Annual Fee: ₹XXX 
 - Welcome Benefits: Details
 - Income Required: ₹XXX
 
-REWARD RATES
+## Reward Rates
 For each card, include:
 - General Spend: X%
 - Dining: X%
 - Travel: X% 
 - Shopping: X%
 
-ADDITIONAL BENEFITS
+## Additional Benefits
 For each card, include:
 - Lounge Access: Details
 - Insurance: Details
 - Offers: Details
 
-BEST SUITED FOR
+## Best Suited For
 - Overall: Card name - Brief reason why
 - Rewards: Card name - Brief reason why
 - Travel: Card name - Brief reason why
@@ -91,9 +89,9 @@ IMPORTANT:
 - Use ₹ symbol for all amounts
 - Include actual numbers/percentages
 - Present ALL comparisons with clear headings and bullet points
+- Use H2 (##) for main sections and H3 (###) for subsections
 - Make sure to include specific details and numbers
 - Create clear visual hierarchy with indentation of bullet points
-- When comparing cards, first list one card's features completely, then the other's
 
 Remember to:
 - Keep Indian context central
@@ -129,17 +127,17 @@ function enhanceMarkdownTables(content: string): string {
   });
   
   // Handle "Best Suited For" tables which seem to have formatting issues
-  const bestSuitedRegex = /(#+\s*Best Suited For.*?\n+)(?!\|)(.+?)(?=\n\n|$)/s;
+  const bestSuitedRegex = /(#+\s*Best Suited For.*?\n+)(?!\|)(.+?)(?=\n\n|$)/gs;
   enhanced = enhanced.replace(bestSuitedRegex, (match, title, content) => {
     // Try to extract data from malformed tables with || or | patterns
-    const rows = content.split(/\|\||(?:\n\|)/).filter((row: string) => row.trim());
+    const rows = content.split(/\|\||(?:\n\|)/).filter(row => row.trim());
     
     if (rows.length > 0) {
       let fixedTable = '| Use Case | Best Card | Reason |\n|----------|-----------|--------|\n';
       
       for (const row of rows) {
         // Extract data from row using regex
-        const parts = row.split('|').filter((part: string) => part.trim());
+        const parts = row.split('|').filter(part => part.trim());
         if (parts.length >= 3) {
           fixedTable += `| ${parts[0].trim()} | ${parts[1].trim()} | ${parts[2].trim()} |\n`;
         } else if (parts.length === 2) {
