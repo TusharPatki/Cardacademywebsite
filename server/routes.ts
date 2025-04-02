@@ -574,6 +574,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             
             // Call Gemini API to generate response
             const result = await generateResponse([
+              { role: "system", content: "You are a concise credit card expert focusing on the Indian market. NEVER use tables for comparisons, always use bullet points, headings, and subheadings for organizing your responses. Use clear, hierarchical formatting with H2 (##) and H3 (###) headings to organize information. When comparing features, use bullet points with appropriate indentation to show hierarchy. Make sure to include specific details and numbers." },
               { role: "user", content: message }
             ]);
             
@@ -602,7 +603,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             
             // Call Perplexity API to generate response
             const result = await generateResponse([
-              { role: "system", content: "You are a credit card expert focusing on the Indian market. Provide detailed, helpful information about credit cards, their benefits, and how to choose the best card based on user needs." },
+              { role: "system", content: "You are a concise credit card expert focusing on the Indian market. NEVER use tables for comparisons, always use bullet points, headings, and subheadings for organizing your responses. Use clear, hierarchical formatting with H2 (##) and H3 (###) headings to organize information. When comparing features, use bullet points with appropriate indentation to show hierarchy. Make sure to include specific details and numbers." },
               { role: "user", content: message }
             ]);
             
