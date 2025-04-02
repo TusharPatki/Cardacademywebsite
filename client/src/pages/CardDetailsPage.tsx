@@ -125,8 +125,44 @@ export default function CardDetailsPage() {
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
+              {/* Card Header with Image */}
+              <div className="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200 mb-6">
+                <div 
+                  className="p-6 text-white flex justify-between items-center"
+                  style={{
+                    background: `linear-gradient(to right, ${card.cardColorFrom || '#0F4C81'}, ${card.cardColorTo || '#0F4C81'})`
+                  }}
+                >
+                  <h1 className="text-3xl font-bold">{card.name}</h1>
+                  {bank?.logoUrl && (
+                    <img 
+                      src={bank.logoUrl} 
+                      alt={bank.name} 
+                      className="h-10 w-auto rounded"
+                    />
+                  )}
+                </div>
+                
+                {card.imageUrl && (
+                  <div className="px-6 py-4 bg-white">
+                    <img 
+                      src={card.imageUrl} 
+                      alt={card.name} 
+                      className="w-full h-auto object-contain max-h-[300px]"
+                    />
+                  </div>
+                )}
+              </div>
+              
               <div className="flex justify-between items-center mb-4">
-                <h1 className="text-3xl font-bold text-gray-900">{card.name}</h1>
+                <div className="flex items-center">
+                  {card.rating && (
+                    <div className="flex items-center mr-4">
+                      <Star className="h-5 w-5 text-yellow-400 fill-yellow-400 mr-1" />
+                      <span className="font-medium">{card.rating}</span>
+                    </div>
+                  )}
+                </div>
                 {card.contentHtml && (
                   <Button 
                     variant="ghost" 
@@ -153,39 +189,6 @@ export default function CardDetailsPage() {
                     </div>
                   )}
                   <span className="text-gray-700">{bank.name}</span>
-                </div>
-              )}
-              
-              {card.imageUrl ? (
-                <div className="mb-8 rounded-lg overflow-hidden shadow-md">
-                  <img 
-                    src={card.imageUrl} 
-                    alt={card.name}
-                    className="w-full h-auto object-cover"
-                  />
-                </div>
-              ) : (
-                <div 
-                  className="p-6 rounded-lg text-white mb-8 h-56 flex flex-col justify-between shadow-md"
-                  style={{
-                    background: `linear-gradient(to right, ${card.cardColorFrom || '#0F4C81'}, ${card.cardColorTo || '#0F4C81'})`
-                  }}
-                >
-                  <div className="flex justify-between items-start">
-                    <h2 className="text-xl font-semibold">{card.name}</h2>
-                    {bank && bank.logoUrl && (
-                      <img
-                        src={bank.logoUrl}
-                        alt={bank.name}
-                        className="h-8 w-auto rounded"
-                      />
-                    )}
-                  </div>
-                  <div className="mt-auto">
-                    <div className="text-lg font-semibold">
-                      {card.rewardsDescription ? card.rewardsDescription.split('.')[0] : 'Rewards details'}
-                    </div>
-                  </div>
                 </div>
               )}
               

@@ -49,12 +49,12 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
     queryKey: ['/api/categories'],
   });
   
-  // Form schema
+  // Form schema with proper types
   const formSchema = z.object({
     name: z.string().min(3, "Name must be at least 3 characters."),
     slug: z.string().min(3, "Slug must be at least 3 characters.").regex(/^[a-z0-9-]+$/, "Slug must contain only lowercase letters, numbers, and hyphens."),
-    bankId: z.string().transform(val => parseInt(val, 10)),
-    categoryId: z.string().transform(val => parseInt(val, 10)),
+    bankId: z.string(), // Keep as string in the form schema
+    categoryId: z.string(), // Keep as string in the form schema
     annualFee: z.string().min(1, "Annual fee is required."),
     introApr: z.string().optional(),
     regularApr: z.string().min(1, "Regular APR is required."),
@@ -169,16 +169,23 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
     setIsPending(true);
     
     try {
+      // Convert string IDs to numbers before sending to API
+      const dataToSubmit = {
+        ...values,
+        bankId: values.bankId ? parseInt(values.bankId, 10) : undefined,
+        categoryId: values.categoryId ? parseInt(values.categoryId, 10) : undefined
+      };
+      
       if (card) {
         // Update existing card
-        await apiRequest("PUT", `/api/cards/${card.id}`, values);
+        await apiRequest("PUT", `/api/cards/${card.id}`, dataToSubmit);
         toast({
           title: "Card updated",
           description: "The credit card has been updated successfully.",
         });
       } else {
         // Create new card
-        await apiRequest("POST", "/api/cards", values);
+        await apiRequest("POST", "/api/cards", dataToSubmit);
         toast({
           title: "Card created",
           description: "The credit card has been created successfully.",
