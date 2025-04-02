@@ -500,15 +500,15 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
           name="youtubeVideoId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>YouTube Video ID</FormLabel>
+              <FormLabel>YouTube Video ID or URL</FormLabel>
               <FormControl>
                 <Input 
-                  placeholder="e.g. dQw4w9WgXcQ (from https://www.youtube.com/watch?v=dQw4w9WgXcQ)" 
+                  placeholder="e.g. dQw4w9WgXcQ or https://www.youtube.com/watch?v=dQw4w9WgXcQ" 
                   {...field} 
                 />
               </FormControl>
               <p className="text-sm text-gray-500 mt-1">
-                Enter only the video ID from the YouTube URL, not the full URL.
+                Enter either the YouTube video ID or full URL (both formats will work).
               </p>
               <FormMessage />
             </FormItem>

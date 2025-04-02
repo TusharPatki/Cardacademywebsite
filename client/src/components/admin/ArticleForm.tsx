@@ -27,6 +27,47 @@ import { Calendar, UploadIcon } from "lucide-react";
 import { format } from "date-fns";
 import { type Article } from "@/lib/types";
 
+// Helper function to extract YouTube video ID from various URL formats or return the ID itself
+const extractYoutubeVideoId = (urlOrId: string): string => {
+  if (!urlOrId) return '';
+  
+  // If it's already just an ID (no slashes or protocol)
+  if (!urlOrId.includes('/') && !urlOrId.includes('http')) {
+    return urlOrId;
+  }
+  
+  try {
+    // Handle YouTube URLs (various formats)
+    const url = new URL(urlOrId);
+    
+    // Format: youtube.com/watch?v=VIDEO_ID
+    if (url.searchParams.has('v')) {
+      return url.searchParams.get('v') || '';
+    }
+    
+    // Format: youtube.com/embed/VIDEO_ID
+    if (url.pathname.includes('/embed/')) {
+      return url.pathname.split('/embed/')[1];
+    }
+    
+    // Format: youtu.be/VIDEO_ID
+    if (url.hostname === 'youtu.be') {
+      return url.pathname.substring(1);
+    }
+    
+    // For search query URLs, return empty string
+    if (url.pathname.includes('/results')) {
+      return '';
+    }
+  } catch (e) {
+    // If it's not a valid URL, return the input as is
+    console.error('Error parsing YouTube URL:', e);
+  }
+  
+  // Return the original value if we couldn't extract an ID
+  return urlOrId;
+};
+
 interface ArticleFormProps {
   article?: Article;
   onSuccess: () => void;
@@ -234,15 +275,15 @@ export function ArticleForm({ article, onSuccess }: ArticleFormProps) {
             name="youtubeVideoId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>YouTube Video ID</FormLabel>
+                <FormLabel>YouTube Video ID or URL</FormLabel>
                 <FormControl>
                   <Input 
-                    placeholder="e.g. dQw4w9WgXcQ (from https://www.youtube.com/watch?v=dQw4w9WgXcQ)" 
+                    placeholder="e.g. dQw4w9WgXcQ or https://www.youtube.com/watch?v=dQw4w9WgXcQ" 
                     {...field} 
                   />
                 </FormControl>
                 <p className="text-sm text-gray-500 mt-1">
-                  Enter only the video ID from the YouTube URL, not the full URL.
+                  Enter either the YouTube video ID or full URL (both formats will work).
                 </p>
                 <FormMessage />
               </FormItem>
@@ -402,7 +443,7 @@ export function ArticleForm({ article, onSuccess }: ArticleFormProps) {
                   <h4 className="text-sm font-medium mb-2">Video Preview:</h4>
                   <div>
                     <img 
-                      src={`https://img.youtube.com/vi/${form.watch("youtubeVideoId")}/mqdefault.jpg`}
+                      src={`https://img.youtube.com/vi/${extractYoutubeVideoId(form.watch("youtubeVideoId"))}/mqdefault.jpg`}
                       alt="YouTube thumbnail"
                       className="rounded-md"
                     />

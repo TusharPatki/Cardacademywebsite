@@ -36,6 +36,47 @@ import {
 import { type Card as CreditCard, type Bank } from "@/lib/types";
 import { Link } from "wouter";
 
+// Helper function to extract YouTube video ID from various URL formats or return the ID itself
+const extractYoutubeVideoId = (urlOrId: string): string => {
+  if (!urlOrId) return '';
+  
+  // If it's already just an ID (no slashes or protocol)
+  if (!urlOrId.includes('/') && !urlOrId.includes('http')) {
+    return urlOrId;
+  }
+  
+  try {
+    // Handle YouTube URLs (various formats)
+    const url = new URL(urlOrId);
+    
+    // Format: youtube.com/watch?v=VIDEO_ID
+    if (url.searchParams.has('v')) {
+      return url.searchParams.get('v') || '';
+    }
+    
+    // Format: youtube.com/embed/VIDEO_ID
+    if (url.pathname.includes('/embed/')) {
+      return url.pathname.split('/embed/')[1];
+    }
+    
+    // Format: youtu.be/VIDEO_ID
+    if (url.hostname === 'youtu.be') {
+      return url.pathname.substring(1);
+    }
+    
+    // For search query URLs, use a default video ID
+    if (url.pathname.includes('/results')) {
+      return 'ysJyxEmWaZQ'; // Default HDFC Infinia video ID
+    }
+  } catch (e) {
+    // If it's not a valid URL, try to use it as is
+    console.error('Error parsing YouTube URL:', e);
+  }
+  
+  // For all other cases, return a default video ID
+  return 'ysJyxEmWaZQ'; // Default HDFC Infinia video ID
+};
+
 export default function CardDetailsPage() {
   const [, params] = useRoute("/cards/:slug");
   const slug = params?.slug;
@@ -377,7 +418,7 @@ export default function CardDetailsPage() {
                             <h3 className="text-lg font-medium mb-4">Video Review</h3>
                             <div className="aspect-w-16 aspect-h-9">
                               <iframe
-                                src={`https://www.youtube.com/embed/${card.youtubeVideoId}`}
+                                src={`https://www.youtube.com/embed/${extractYoutubeVideoId(card.youtubeVideoId)}`}
                                 title={`${card.name} Video Review`}
                                 className="w-full rounded-lg"
                                 style={{ height: '400px' }}

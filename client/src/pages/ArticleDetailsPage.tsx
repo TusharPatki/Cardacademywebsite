@@ -12,6 +12,47 @@ import { type Article } from "@/lib/types";
 import { Link } from "wouter";
 import { format } from "date-fns";
 
+// Helper function to extract YouTube video ID from various URL formats or return the ID itself
+const extractYoutubeVideoId = (urlOrId: string): string => {
+  if (!urlOrId) return '';
+  
+  // If it's already just an ID (no slashes or protocol)
+  if (!urlOrId.includes('/') && !urlOrId.includes('http')) {
+    return urlOrId;
+  }
+  
+  try {
+    // Handle YouTube URLs (various formats)
+    const url = new URL(urlOrId);
+    
+    // Format: youtube.com/watch?v=VIDEO_ID
+    if (url.searchParams.has('v')) {
+      return url.searchParams.get('v') || '';
+    }
+    
+    // Format: youtube.com/embed/VIDEO_ID
+    if (url.pathname.includes('/embed/')) {
+      return url.pathname.split('/embed/')[1];
+    }
+    
+    // Format: youtu.be/VIDEO_ID
+    if (url.hostname === 'youtu.be') {
+      return url.pathname.substring(1);
+    }
+    
+    // For search query URLs, return empty string
+    if (url.pathname.includes('/results')) {
+      return '';
+    }
+  } catch (e) {
+    // If it's not a valid URL, return the input as is
+    console.error('Error parsing YouTube URL:', e);
+  }
+  
+  // Return the original value if we couldn't extract an ID
+  return urlOrId;
+};
+
 export default function ArticleDetailsPage() {
   const [, params] = useRoute("/news/:slug");
   const slug = params?.slug;
@@ -129,7 +170,7 @@ export default function ArticleDetailsPage() {
                       <h3 className="text-lg font-medium mb-4">Video Content</h3>
                       <div className="aspect-w-16 aspect-h-9">
                         <iframe
-                          src={`https://www.youtube.com/embed/${article.youtubeVideoId}`}
+                          src={`https://www.youtube.com/embed/${extractYoutubeVideoId(article.youtubeVideoId)}`}
                           title={article.title}
                           className="w-full rounded-lg"
                           style={{ height: '400px' }}
