@@ -9,8 +9,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { type ChatResponse } from "@/lib/types";
 import ReactMarkdown from "react-markdown";
 import { Spinner } from "@/components/ui/spinner";
-// We don't need SyntaxHighlighter imports anymore
-// Using simpler styling for code blocks
 
 interface Message {
   role: "user" | "assistant";
@@ -41,6 +39,30 @@ export function AIChat() {
     }
   }, [messages]);
 
+  // Clean and format content for better display
+  const enhanceMarkdown = (content: string): string => {
+    let enhanced = content;
+    
+    // Enhance table formatting
+    const tableRegex = /(\|[^\n]+\|\n\|[-:\|\s]+\|\n(?:\|[^\n]+\|\n)+)/g;
+    enhanced = enhanced.replace(tableRegex, (match) => {
+      return match
+        .replace(/\n{2,}/g, '\n') // Remove extra newlines
+        .replace(/\|(\s*-+\s*)\|/g, '|$1|') // Fix divider rows
+        .trim();
+    });
+    
+    // Fix headings without proper spacing
+    enhanced = enhanced.replace(/###([^\n]+)/g, '### $1');
+    enhanced = enhanced.replace(/##([^\n]+)/g, '## $1');
+    enhanced = enhanced.replace(/#([^\n]+)/g, '# $1');
+    
+    // Ensure proper spacing around list items
+    enhanced = enhanced.replace(/\n-([^\n]+)/g, '\n- $1');
+    
+    return enhanced;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -61,12 +83,12 @@ export function AIChat() {
       const response = await apiRequest("POST", "/api/chat", { message: userMessage });
       const data: ChatResponse = await response.json();
       
-      // Add assistant response to chat
+      // Add assistant response to chat with enhanced formatting
       setMessages((prev) => [
         ...prev,
         { 
           role: "assistant", 
-          content: data.response,
+          content: enhanceMarkdown(data.response),
           citations: data.citations,
           provider: data.provider
         },
