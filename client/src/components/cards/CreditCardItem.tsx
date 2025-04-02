@@ -48,10 +48,7 @@ export function CreditCardItem({ card, banks, showFullDetails = false }: CreditC
         <span className="font-semibold">{card.name}</span>
         {bank && (
           <img 
-            src={bank.logoUrl ? 
-              (bank.logoUrl.startsWith('/') ? bank.logoUrl : `/${bank.logoUrl.replace(/^\//, '')}`) : 
-              'https://upload.wikimedia.org/wikipedia/commons/2/28/HDFC_Bank_Logo.svg'
-            } 
+            src={bank.logoUrl || 'https://upload.wikimedia.org/wikipedia/commons/2/28/HDFC_Bank_Logo.svg'} 
             alt={bank.name} 
             className="h-8 w-auto"
             onError={(e) => {
@@ -79,7 +76,7 @@ export function CreditCardItem({ card, banks, showFullDetails = false }: CreditC
         {card.imageUrl ? (
           <div className="mb-4 flex justify-center">
             <img 
-              src={card.imageUrl.startsWith('/') ? card.imageUrl : `/${card.imageUrl.replace(/^\//, '')}`} 
+              src={card.imageUrl} 
               alt={card.name} 
               className="h-32 object-contain rounded-md"
               onError={(e) => {

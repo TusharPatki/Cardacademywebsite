@@ -115,49 +115,37 @@ export const insertBankSchema = createInsertSchema(banks).pick({
   description: true,
 });
 
-export const insertCardSchema = createInsertSchema(cards)
-  .pick({
-    name: true,
-    slug: true,
-    bankId: true,
-    categoryId: true,
-    annualFee: true,
-    introApr: true,
-    regularApr: true,
-    rewardsDescription: true,
-    rating: true,
-    featured: true,
-    cardColorFrom: true,
-    cardColorTo: true,
-    contentHtml: true,
-    youtubeVideoId: true,
-    imageUrl: true,
-    applyLink: true,
-    publishDate: true,
-  })
-  .extend({
-    // Update the imageUrl validation to accept both URLs and relative paths
-    imageUrl: z.string().optional(),
-    // Keep URL validation for applyLink
-    applyLink: z.string().url("Apply link must be a valid URL").optional(),
-  });
+export const insertCardSchema = createInsertSchema(cards).pick({
+  name: true,
+  slug: true,
+  bankId: true,
+  categoryId: true,
+  annualFee: true,
+  introApr: true,
+  regularApr: true,
+  rewardsDescription: true,
+  rating: true,
+  featured: true,
+  cardColorFrom: true,
+  cardColorTo: true,
+  contentHtml: true,
+  youtubeVideoId: true,
+  imageUrl: true,
+  applyLink: true,
+  publishDate: true,
+});
 
-export const insertArticleSchema = createInsertSchema(articles)
-  .pick({
-    title: true,
-    slug: true,
-    content: true,
-    contentHtml: true,
-    excerpt: true,
-    imageUrl: true,
-    publishDate: true,
-    category: true,
-    youtubeVideoId: true,
-  })
-  .extend({
-    // Update the imageUrl validation to accept both URLs and relative paths
-    imageUrl: z.string().optional(),
-  });
+export const insertArticleSchema = createInsertSchema(articles).pick({
+  title: true,
+  slug: true,
+  content: true,
+  contentHtml: true,
+  excerpt: true,
+  imageUrl: true,
+  publishDate: true,
+  category: true,
+  youtubeVideoId: true,
+});
 
 export const insertCalculatorSchema = createInsertSchema(calculators).pick({
   name: true,

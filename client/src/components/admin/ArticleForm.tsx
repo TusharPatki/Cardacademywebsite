@@ -23,7 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar, UploadIcon, Image as ImageIcon } from "lucide-react";
+import { Calendar, UploadIcon } from "lucide-react";
 import { format } from "date-fns";
 import { type Article } from "@/lib/types";
 
@@ -76,9 +76,7 @@ interface ArticleFormProps {
 export function ArticleForm({ article, onSuccess }: ArticleFormProps) {
   const [isPending, setIsPending] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const imageInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   
   // Form schema
@@ -88,7 +86,7 @@ export function ArticleForm({ article, onSuccess }: ArticleFormProps) {
     content: z.string().min(100, "Content must be at least 100 characters."),
     contentHtml: z.string().optional(),
     excerpt: z.string().min(10, "Excerpt must be at least 10 characters.").max(200, "Excerpt must be at most 200 characters."),
-    imageUrl: z.string().optional().or(z.literal("")),
+    imageUrl: z.string().url("Must be a valid URL.").optional().or(z.literal("")),
     publishDate: z.string(),
     category: z.string().min(1, "Category is required"),
     youtubeVideoId: z.string().optional().or(z.literal("")),
@@ -126,71 +124,6 @@ export function ArticleForm({ article, onSuccess }: ArticleFormProps) {
   const handleHtmlFileImport = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
-    }
-  };
-  
-  // Function to handle image upload
-  const handleImageUpload = () => {
-    if (imageInputRef.current) {
-      imageInputRef.current.click();
-    }
-  };
-  
-  // Handle image file selection
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    
-    // Only allow JPEG or PNG files
-    if (!['image/jpeg', 'image/png'].includes(file.type)) {
-      toast({
-        title: "Invalid File Type",
-        description: "Please upload a JPEG or PNG image.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    setIsUploading(true);
-    
-    try {
-      // Create a FormData object to send the file
-      const formData = new FormData();
-      formData.append('image', file);
-      
-      // Upload the image using the API endpoint
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-        credentials: 'include',
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to upload image');
-      }
-      
-      const data = await response.json();
-      
-      // Update the imageUrl field with the returned URL
-      form.setValue('imageUrl', data.imageUrl);
-      
-      toast({
-        title: "Image Uploaded",
-        description: "The image has been uploaded successfully.",
-      });
-    } catch (error) {
-      console.error("Error uploading image:", error);
-      toast({
-        title: "Upload Error",
-        description: "Failed to upload image. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsUploading(false);
-      // Reset the file input
-      if (imageInputRef.current) {
-        imageInputRef.current.value = '';
-      }
     }
   };
 
@@ -328,54 +261,10 @@ export function ArticleForm({ article, onSuccess }: ArticleFormProps) {
             name="imageUrl"
             render={({ field }) => (
               <FormItem>
-                <div className="flex justify-between items-center">
-                  <FormLabel>Article Image</FormLabel>
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={handleImageUpload}
-                    disabled={isUploading}
-                    className="flex items-center gap-1"
-                  >
-                    <ImageIcon className="h-4 w-4" />
-                    {isUploading ? "Uploading..." : "Upload Image"}
-                  </Button>
-                </div>
+                <FormLabel>Image URL</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="e.g. https://example.com/image.jpg" 
-                    {...field} 
-                  />
+                  <Input placeholder="e.g. https://example.com/image.jpg" {...field} />
                 </FormControl>
-                <input 
-                  type="file" 
-                  ref={imageInputRef} 
-                  accept=".jpg,.jpeg,.png" 
-                  onChange={handleImageChange} 
-                  className="hidden"
-                />
-                {field.value && (
-                  <div className="mt-2">
-                    <p className="text-sm text-gray-500 mb-2">Image Preview:</p>
-                    <img 
-                      src={field.value.startsWith('/') ? field.value : `/${field.value.replace(/^\//, '')}`} 
-                      alt="Article Preview" 
-                      className="max-h-40 rounded-md border border-gray-200"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none';
-                        toast({
-                          title: "Image Error",
-                          description: "Could not load image preview. URL may be invalid.",
-                          variant: "destructive",
-                        });
-                      }}
-                    />
-                  </div>
-                )}
-                <p className="text-sm text-gray-500 mt-1">
-                  Enter the URL for the article image or upload one (JPEG/PNG, recommended size: 800x450px).
-                </p>
                 <FormMessage />
               </FormItem>
             )}
@@ -524,19 +413,11 @@ export function ArticleForm({ article, onSuccess }: ArticleFormProps) {
             {form.watch("imageUrl") && (
               <div className="h-48 overflow-hidden">
                 <img
-                  src={form.watch("imageUrl") && form.watch("imageUrl")?.startsWith('/') 
-                    ? form.watch("imageUrl") 
-                    : form.watch("imageUrl") ? `/${form.watch("imageUrl")?.replace(/^\//, '')}` : ''
-                  }
-                  alt={form.watch("title") || "Article image"}
+                  src={form.watch("imageUrl")}
+                  alt={form.watch("title")}
                   className="w-full h-full object-cover"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = 'none';
-                    toast({
-                      title: "Image Error",
-                      description: "Could not load image preview. URL may be invalid.",
-                      variant: "destructive",
-                    });
+                    (e.target as HTMLImageElement).src = "https://placehold.co/800x400?text=Article+Image";
                   }}
                 />
               </div>

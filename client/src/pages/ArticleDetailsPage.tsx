@@ -129,7 +129,7 @@ export default function ArticleDetailsPage() {
                 {article.imageUrl && (
                   <div className="h-72 overflow-hidden">
                     <img
-                      src={article.imageUrl.startsWith('/') ? article.imageUrl : `/${article.imageUrl.replace(/^\//, '')}`}
+                      src={article.imageUrl}
                       alt={article.title}
                       className="w-full h-full object-cover"
                     />
@@ -206,7 +206,7 @@ export default function ArticleDetailsPage() {
                         {relatedArticle.imageUrl && (
                           <div className="h-32 overflow-hidden">
                             <img
-                              src={relatedArticle.imageUrl.startsWith('/') ? relatedArticle.imageUrl : `/${relatedArticle.imageUrl.replace(/^\//, '')}`}
+                              src={relatedArticle.imageUrl}
                               alt={relatedArticle.title}
                               className="w-full h-full object-cover"
                             />
