@@ -407,10 +407,16 @@ export default function CardDetailsPage() {
                           Complete information about the {card.name}
                         </CardDescription>
                       </CardHeader>
-                      <CardContent className="px-4 sm:px-6">
+                      <CardContent className="px-3 sm:px-4">
                         <div 
-                          className="prose prose-blue max-w-none overflow-x-auto"
-                          style={{ width: '100%', overflowWrap: 'break-word' }}
+                          className="prose prose-blue max-w-none overflow-x-visible"
+                          style={{ 
+                            width: '150%', 
+                            overflowWrap: 'break-word',
+                            transform: 'scale(0.85)',
+                            transformOrigin: 'top left',
+                            marginBottom: '-10%'
+                          }}
                           dangerouslySetInnerHTML={{ __html: card.contentHtml }}
                         />
                         
@@ -528,8 +534,14 @@ export default function CardDetailsPage() {
               </DialogDescription>
             </DialogHeader>
             <div 
-              className="prose prose-blue max-w-none mt-4 px-1 overflow-x-auto"
-              style={{ width: '100%', overflowWrap: 'break-word' }}
+              className="prose prose-blue max-w-none mt-4 px-1 overflow-x-visible"
+              style={{ 
+                width: '150%', 
+                overflowWrap: 'break-word',
+                transform: 'scale(0.85)',
+                transformOrigin: 'top left',
+                marginBottom: '-10%'
+              }}
               dangerouslySetInnerHTML={{ __html: card.contentHtml }}
             />
             <DialogFooter className="mt-6">
