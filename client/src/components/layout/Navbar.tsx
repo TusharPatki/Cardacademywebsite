@@ -88,15 +88,11 @@ export function Navbar() {
               <Search className="h-5 w-5" />
             </Button>
             
-            {user ? (
+            {user && (
               <Link href="/admin">
                 <Button variant="outline" className="text-sm">
                   Admin Dashboard
                 </Button>
-              </Link>
-            ) : (
-              <Link href="/admin/login">
-                <Button className="text-sm">Sign In</Button>
               </Link>
             )}
           </div>
@@ -149,16 +145,10 @@ export function Navbar() {
                   </div>
                   
                   <div className="mt-auto border-t pt-4">
-                    {user ? (
+                    {user && (
                       <Link href="/admin" onClick={() => setIsOpen(false)}>
                         <Button className="w-full" variant="outline">
                           Admin Dashboard
-                        </Button>
-                      </Link>
-                    ) : (
-                      <Link href="/admin/login" onClick={() => setIsOpen(false)}>
-                        <Button className="w-full">
-                          Sign In
                         </Button>
                       </Link>
                     )}

@@ -45,7 +45,7 @@ export default function AdminLoginPage() {
       await login(values);
       toast({
         title: "Login successful",
-        description: "Welcome to the CardSavvy admin panel.",
+        description: "Welcome to the Credit Card Advisor admin panel.",
       });
       navigate("/admin");
     } catch (error) {
@@ -69,7 +69,7 @@ export default function AdminLoginPage() {
           </div>
         </div>
         <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
-          CardSavvy Admin
+          Credit Card Advisor Admin
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
           Sign in to access the admin dashboard
@@ -133,12 +133,6 @@ export default function AdminLoginPage() {
                 </div>
               </form>
             </Form>
-            
-            <div className="mt-6">
-              <p className="text-center text-xs text-gray-500">
-                Default credentials: admin / password123
-              </p>
-            </div>
             
             <div className="mt-6 border-t pt-4">
               <Button
