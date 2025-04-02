@@ -21,6 +21,15 @@ import {
 import { type Category, type Card as CreditCard, type Bank } from "@/lib/types";
 import { ChevronDown, Filter } from "lucide-react";
 
+// Helper to safely parse card fee values
+const parseFeeValue = (fee: string): number => {
+  try {
+    return parseInt(fee.replace(/[^0-9]/g, "") || "0");
+  } catch (e) {
+    return 0;
+  }
+};
+
 export default function CardsPage() {
   const [activeCategory, setActiveCategory] = useState<number | null>(null);
   const [selectedBank, setSelectedBank] = useState<string>("all");
@@ -45,7 +54,7 @@ export default function CardsPage() {
   
   // If no active category is set, use all cards
   const filteredByCategory = activeCategory
-    ? cards?.filter(card => card.categoryId === activeCategory)
+    ? cards?.filter(card => card.categoryId === activeCategory) || []
     : cards || [];
   
   // Filter and sort cards
@@ -56,11 +65,11 @@ export default function CardsPage() {
     
     if (selectedFee === "no-fee" && card.annualFee !== "$0") {
       return false;
-    } else if (selectedFee === "under-100" && (card.annualFee === "$0" || parseInt(card.annualFee.replace(/[^0-9]/g, "")) >= 100)) {
+    } else if (selectedFee === "under-100" && (card.annualFee === "$0" || parseFeeValue(card.annualFee) >= 100)) {
       return false;
-    } else if (selectedFee === "100-300" && (parseInt(card.annualFee.replace(/[^0-9]/g, "")) < 100 || parseInt(card.annualFee.replace(/[^0-9]/g, "")) >= 300)) {
+    } else if (selectedFee === "100-300" && (parseFeeValue(card.annualFee) < 100 || parseFeeValue(card.annualFee) >= 300)) {
       return false;
-    } else if (selectedFee === "300-plus" && parseInt(card.annualFee.replace(/[^0-9]/g, "")) < 300) {
+    } else if (selectedFee === "300-plus" && parseFeeValue(card.annualFee) < 300) {
       return false;
     }
     
@@ -70,9 +79,9 @@ export default function CardsPage() {
   // Sort cards
   const sortedCards = [...filteredCards].sort((a, b) => {
     if (sortOption === "highest-cashback") {
-      return b.rewardsDescription.includes("5%") ? 1 : -1;
+      return ((b.rewardsDescription || "").includes("5%") ? 1 : -1);
     } else if (sortOption === "lowest-fee") {
-      return parseInt(a.annualFee.replace(/[^0-9]/g, "")) - parseInt(b.annualFee.replace(/[^0-9]/g, ""));
+      return parseFeeValue(a.annualFee) - parseFeeValue(b.annualFee);
     } else if (sortOption === "intro-apr") {
       return (b.introApr?.length || 0) - (a.introApr?.length || 0);
     }
@@ -99,25 +108,22 @@ export default function CardsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
               <div>
                 <h3 className="text-xl font-medium text-gray-700 mb-4">Category</h3>
-                <div className="flex flex-col space-y-2">
-                  <Button 
-                    variant={activeCategory === null ? "default" : "outline"} 
-                    className={`justify-start h-12 ${activeCategory === null ? "bg-gray-100 text-black hover:bg-gray-200" : "bg-white"}`}
-                    onClick={() => setActiveCategory(null)}
-                  >
-                    All
-                  </Button>
-                  {categories?.map((category) => (
-                    <Button
-                      key={category.id}
-                      variant={activeCategory === category.id ? "default" : "outline"}
-                      className={`justify-start h-12 ${activeCategory === category.id ? "bg-gray-100 text-black hover:bg-gray-200" : "bg-white"}`}
-                      onClick={() => setActiveCategory(category.id)}
-                    >
-                      {category.name}
-                    </Button>
-                  ))}
-                </div>
+                <Select
+                  value={activeCategory === null ? "all" : activeCategory.toString()}
+                  onValueChange={(value) => setActiveCategory(value === "all" ? null : parseInt(value))}
+                >
+                  <SelectTrigger className="h-12 text-lg border-2">
+                    <SelectValue placeholder="All" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All</SelectItem>
+                    {categories?.map((category) => (
+                      <SelectItem key={category.id} value={category.id.toString()}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               
               <div>
