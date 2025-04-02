@@ -39,31 +39,31 @@ import { Link } from "wouter";
 // Helper function to extract YouTube video ID from various URL formats or return the ID itself
 const extractYoutubeVideoId = (urlOrId: string): string => {
   if (!urlOrId) return '';
-
+  
   // If it's already just an ID (no slashes or protocol)
   if (!urlOrId.includes('/') && !urlOrId.includes('http')) {
     return urlOrId;
   }
-
+  
   try {
     // Handle YouTube URLs (various formats)
     const url = new URL(urlOrId);
-
+    
     // Format: youtube.com/watch?v=VIDEO_ID
     if (url.searchParams.has('v')) {
       return url.searchParams.get('v') || '';
     }
-
+    
     // Format: youtube.com/embed/VIDEO_ID
     if (url.pathname.includes('/embed/')) {
       return url.pathname.split('/embed/')[1];
     }
-
+    
     // Format: youtu.be/VIDEO_ID
     if (url.hostname === 'youtu.be') {
       return url.pathname.substring(1);
     }
-
+    
     // For search query URLs, use a default video ID
     if (url.pathname.includes('/results')) {
       return 'ysJyxEmWaZQ'; // Default HDFC Infinia video ID
@@ -72,7 +72,7 @@ const extractYoutubeVideoId = (urlOrId: string): string => {
     // If it's not a valid URL, try to use it as is
     console.error('Error parsing YouTube URL:', e);
   }
-
+  
   // For all other cases, return a default video ID
   return 'ysJyxEmWaZQ'; // Default HDFC Infinia video ID
 };
@@ -80,22 +80,22 @@ const extractYoutubeVideoId = (urlOrId: string): string => {
 export default function CardDetailsPage() {
   const [, params] = useRoute("/cards/:slug");
   const slug = params?.slug;
-
+  
   const { data: card, isLoading: isLoadingCard } = useQuery<CreditCard>({
     queryKey: [`/api/cards/${slug}`],
     enabled: !!slug,
   });
-
+  
   const { data: bank } = useQuery<Bank>({
     queryKey: [`/api/banks/${card?.bankId}`],
     enabled: !!card?.bankId,
   });
-
+  
   const { data: similarCards } = useQuery<CreditCard[]>({
     queryKey: ['/api/cards', { categoryId: card?.categoryId }],
     enabled: !!card?.categoryId,
   });
-
+  
   const [dialogOpen, setDialogOpen] = useState(false);
 
   if (isLoadingCard) {
@@ -129,7 +129,7 @@ export default function CardDetailsPage() {
       </Layout>
     );
   }
-
+  
   if (!card) {
     return (
       <Layout>
@@ -154,18 +154,7 @@ export default function CardDetailsPage() {
 
   return (
     <Layout>
-      <div className="bg-gradient-to-r from-primary to-primary-800 text-white py-12">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold mb-4">{card?.name}</h1>
-            <p className="text-xl text-primary-50 max-w-3xl mx-auto">
-              {card?.description}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-gray-50 py-12 min-h-screen">
+      <div className="bg-gray-50 py-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           <div className="mb-6">
             <Link href="/cards">
@@ -174,7 +163,7 @@ export default function CardDetailsPage() {
               </Button>
             </Link>
           </div>
-
+          
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
               {/* Card Header with Image */}
@@ -194,7 +183,7 @@ export default function CardDetailsPage() {
                     />
                   )}
                 </div>
-
+                
                 <div className="px-6 py-4 bg-white">
                   {card.imageUrl ? (
                     <img 
@@ -224,7 +213,7 @@ export default function CardDetailsPage() {
                   )}
                 </div>
               </div>
-
+              
               <div className="flex justify-between items-center mb-4">
                 <div className="flex items-center">
                   {card.rating && (
@@ -245,7 +234,7 @@ export default function CardDetailsPage() {
                   </Button>
                 )}
               </div>
-
+              
               {bank && (
                 <div className="flex items-center mb-6">
                   {bank.logoUrl ? (
@@ -262,7 +251,7 @@ export default function CardDetailsPage() {
                   <span className="text-gray-700">{bank.name}</span>
                 </div>
               )}
-
+              
               <Tabs defaultValue="details" className="mt-4">
                 <TabsList className="mb-6 bg-white w-full flex space-x-2 p-1 rounded-lg border border-gray-200">
                   <TabsTrigger value="details" className="flex-1 rounded-md py-2">Card Details</TabsTrigger>
@@ -270,7 +259,7 @@ export default function CardDetailsPage() {
                   <TabsTrigger value="rates" className="flex-1 rounded-md py-2">Rates & Fees</TabsTrigger>
                   {card.contentHtml && <TabsTrigger value="full-content" className="flex-1 rounded-md py-2">Full Details</TabsTrigger>}
                 </TabsList>
-
+                
                 <TabsContent value="details">
                   <Card>
                     <CardHeader>
@@ -289,13 +278,13 @@ export default function CardDetailsPage() {
                           <span className="ml-2 text-sm font-medium">{card.rating} out of 5</span>
                         </div>
                       )}
-
+                      
                       <div className="space-y-6">
                         <div>
                           <h3 className="text-lg font-medium mb-2">Rewards</h3>
                           <p className="text-gray-700">{card.rewardsDescription || "Information not available"}</p>
                         </div>
-
+                        
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <div className="bg-primary-50 p-4 rounded-lg">
                             <div className="flex items-center mb-2">
@@ -304,7 +293,7 @@ export default function CardDetailsPage() {
                             </div>
                             <p className="text-gray-700">{card.annualFee}</p>
                           </div>
-
+                          
                           {card.introApr && (
                             <div className="bg-primary-50 p-4 rounded-lg">
                               <div className="flex items-center mb-2">
@@ -314,7 +303,7 @@ export default function CardDetailsPage() {
                               <p className="text-gray-700">{card.introApr}</p>
                             </div>
                           )}
-
+                          
                           <div className="bg-primary-50 p-4 rounded-lg">
                             <div className="flex items-center mb-2">
                               <CreditCardIcon className="h-5 w-5 text-primary mr-1" />
@@ -327,7 +316,7 @@ export default function CardDetailsPage() {
                     </CardContent>
                   </Card>
                 </TabsContent>
-
+                
                 <TabsContent value="benefits">
                   <Card>
                     <CardHeader>
@@ -354,7 +343,7 @@ export default function CardDetailsPage() {
                     </CardContent>
                   </Card>
                 </TabsContent>
-
+                
                 <TabsContent value="rates">
                   <Card>
                     <CardHeader>
@@ -370,35 +359,35 @@ export default function CardDetailsPage() {
                             <h4 className="font-medium mb-1">Annual Fee</h4>
                             <p className="text-gray-700">{card.annualFee}</p>
                           </div>
-
+                          
                           <div>
                             <h4 className="font-medium mb-1">Regular APR</h4>
                             <p className="text-gray-700">{card.regularApr || "Variable"}</p>
                           </div>
-
+                          
                           {card.introApr && (
                             <div>
                               <h4 className="font-medium mb-1">Intro APR</h4>
                               <p className="text-gray-700">{card.introApr}</p>
                             </div>
                           )}
-
+                          
                           <div>
                             <h4 className="font-medium mb-1">Foreign Transaction Fee</h4>
                             <p className="text-gray-700">3% of each transaction</p>
                           </div>
-
+                          
                           <div>
                             <h4 className="font-medium mb-1">Late Payment Fee</h4>
                             <p className="text-gray-700">Up to $40</p>
                           </div>
-
+                          
                           <div>
                             <h4 className="font-medium mb-1">Balance Transfer Fee</h4>
                             <p className="text-gray-700">Either $5 or 5% of the amount of each transfer, whichever is greater</p>
                           </div>
                         </div>
-
+                        
                         <div className="mt-6 text-sm text-gray-500">
                           <p>
                             Rates and fees are subject to change. Please refer to the issuer's website for the most current information.
@@ -408,7 +397,7 @@ export default function CardDetailsPage() {
                     </CardContent>
                   </Card>
                 </TabsContent>
-
+                
                 {card.contentHtml && (
                   <TabsContent value="full-content">
                     <Card>
@@ -418,27 +407,21 @@ export default function CardDetailsPage() {
                           Complete information about the {card.name}
                         </CardDescription>
                       </CardHeader>
-                      <CardContent className="px-3 sm:px-4">
+                      <CardContent>
                         <div 
-                          className="prose prose-blue max-w-none overflow-x-visible break-words"
-                          style={{ 
-                            width: '150%', 
-                            overflowWrap: 'break-word',
-                            transform: 'scale(0.85)',
-                            transformOrigin: 'top left',
-                            marginBottom: '-10%'
-                          }}
+                          className="prose prose-blue max-w-none"
                           dangerouslySetInnerHTML={{ __html: card.contentHtml }}
                         />
-
+                        
                         {card.youtubeVideoId && (
                           <div className="mt-8">
                             <h3 className="text-lg font-medium mb-4">Video Review</h3>
-                            <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                            <div className="aspect-w-16 aspect-h-9">
                               <iframe
                                 src={`https://www.youtube.com/embed/${extractYoutubeVideoId(card.youtubeVideoId)}`}
                                 title={`${card.name} Video Review`}
-                                className="absolute top-0 left-0 w-full h-full rounded-lg"
+                                className="w-full rounded-lg"
+                                style={{ height: '400px' }}
                                 allowFullScreen
                               ></iframe>
                             </div>
@@ -450,7 +433,7 @@ export default function CardDetailsPage() {
                 )}
               </Tabs>
             </div>
-
+            
             <div className="lg:col-span-1">
               <Card>
                 <CardHeader>
@@ -461,7 +444,7 @@ export default function CardDetailsPage() {
                     <p className="text-gray-700">
                       Ready to enjoy the benefits of the {card.name}? Apply now to get started.
                     </p>
-
+                    
                     <div className="flex justify-center">
                       <a 
                         href={card.applyLink || "#"}
@@ -475,7 +458,7 @@ export default function CardDetailsPage() {
                         </Button>
                       </a>
                     </div>
-
+                    
                     <div className="text-sm text-gray-500">
                       <p>
                         By clicking "Apply Now", you will be redirected to the issuer's secure application page.
@@ -484,7 +467,7 @@ export default function CardDetailsPage() {
                   </div>
                 </CardContent>
               </Card>
-
+              
               {bank && (
                 <Card className="mt-6">
                   <CardHeader>
@@ -501,11 +484,11 @@ export default function CardDetailsPage() {
                           />
                         </div>
                       )}
-
+                      
                       <p className="text-gray-700">
                         {bank.description}
                       </p>
-
+                      
                       <Link href={`/banks/${bank.slug}`}>
                         <Button variant="outline" className="w-full">
                           View All {bank.name} Cards
@@ -517,7 +500,7 @@ export default function CardDetailsPage() {
               )}
             </div>
           </div>
-
+          
           {/* Similar Cards */}
           {filteredSimilarCards.length > 0 && (
             <div className="mt-12">
@@ -531,9 +514,9 @@ export default function CardDetailsPage() {
           )}
         </div>
       </div>
-
+      
       <Newsletter />
-
+      
       {/* Dialog for card info button */}
       {card.contentHtml && (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -545,14 +528,7 @@ export default function CardDetailsPage() {
               </DialogDescription>
             </DialogHeader>
             <div 
-              className="prose prose-blue max-w-none mt-4 px-1 overflow-x-visible break-words"
-              style={{ 
-                width: '150%', 
-                overflowWrap: 'break-word',
-                transform: 'scale(0.85)',
-                transformOrigin: 'top left',
-                marginBottom: '-10%'
-              }}
+              className="prose prose-blue max-w-none mt-4"
               dangerouslySetInnerHTML={{ __html: card.contentHtml }}
             />
             <DialogFooter className="mt-6">
