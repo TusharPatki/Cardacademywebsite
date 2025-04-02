@@ -42,6 +42,8 @@ export const cards = pgTable("cards", {
   featured: boolean("featured").default(false),
   cardColorFrom: text("card_color_from").default("#0F4C81"),
   cardColorTo: text("card_color_to").default("#0F4C81"),
+  contentHtml: text("content_html"),
+  youtubeVideoId: text("youtube_video_id"),
 });
 
 // Articles, news and blog posts
@@ -50,10 +52,12 @@ export const articles = pgTable("articles", {
   title: text("title").notNull(),
   slug: text("slug").notNull().unique(),
   content: text("content").notNull(),
+  contentHtml: text("content_html"),
   excerpt: text("excerpt"),
   imageUrl: text("image_url"),
   publishDate: timestamp("publish_date").notNull(),
   category: text("category").notNull(),
+  youtubeVideoId: text("youtube_video_id"),
 });
 
 // Calculators available on the site
@@ -121,16 +125,20 @@ export const insertCardSchema = createInsertSchema(cards).pick({
   featured: true,
   cardColorFrom: true,
   cardColorTo: true,
+  contentHtml: true,
+  youtubeVideoId: true,
 });
 
 export const insertArticleSchema = createInsertSchema(articles).pick({
   title: true,
   slug: true,
   content: true,
+  contentHtml: true,
   excerpt: true,
   imageUrl: true,
   publishDate: true,
   category: true,
+  youtubeVideoId: true,
 });
 
 export const insertCalculatorSchema = createInsertSchema(calculators).pick({

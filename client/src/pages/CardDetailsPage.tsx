@@ -133,7 +133,7 @@ export default function CardDetailsPage() {
               >
                 <div className="flex justify-between items-start">
                   <h2 className="text-xl font-semibold">{card.name}</h2>
-                  {bank && (
+                  {bank && bank.logoUrl && (
                     <img
                       src={bank.logoUrl}
                       alt={bank.name}
@@ -143,7 +143,7 @@ export default function CardDetailsPage() {
                 </div>
                 <div className="mt-auto">
                   <div className="text-lg font-semibold">
-                    {card.rewardsDescription.split('.')[0]}
+                    {card.rewardsDescription ? card.rewardsDescription.split('.')[0] : 'Rewards details'}
                   </div>
                 </div>
               </div>
@@ -153,6 +153,7 @@ export default function CardDetailsPage() {
                   <TabsTrigger value="details">Card Details</TabsTrigger>
                   <TabsTrigger value="benefits">Benefits & Features</TabsTrigger>
                   <TabsTrigger value="rates">Rates & Fees</TabsTrigger>
+                  {card.contentHtml && <TabsTrigger value="full-content">Full Details</TabsTrigger>}
                 </TabsList>
                 
                 <TabsContent value="details">
@@ -177,7 +178,7 @@ export default function CardDetailsPage() {
                       <div className="space-y-6">
                         <div>
                           <h3 className="text-lg font-medium mb-2">Rewards</h3>
-                          <p className="text-gray-700">{card.rewardsDescription}</p>
+                          <p className="text-gray-700">{card.rewardsDescription || "Information not available"}</p>
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -204,7 +205,7 @@ export default function CardDetailsPage() {
                               <CreditCardIcon className="h-5 w-5 text-primary mr-1" />
                               <h4 className="font-medium">Regular APR</h4>
                             </div>
-                            <p className="text-gray-700">{card.regularApr}</p>
+                            <p className="text-gray-700">{card.regularApr || "Variable"}</p>
                           </div>
                         </div>
                       </div>
@@ -223,7 +224,7 @@ export default function CardDetailsPage() {
                     <CardContent>
                       <div className="space-y-4">
                         <p className="text-gray-700">
-                          {card.rewardsDescription}
+                          {card.rewardsDescription || "This card offers rewards and benefits for cardholders."}
                         </p>
                         <p className="text-gray-700">
                           This card also includes standard benefits like fraud protection, online account management, and mobile banking access.
@@ -257,7 +258,7 @@ export default function CardDetailsPage() {
                           
                           <div>
                             <h4 className="font-medium mb-1">Regular APR</h4>
-                            <p className="text-gray-700">{card.regularApr}</p>
+                            <p className="text-gray-700">{card.regularApr || "Variable"}</p>
                           </div>
                           
                           {card.introApr && (
@@ -292,6 +293,40 @@ export default function CardDetailsPage() {
                     </CardContent>
                   </Card>
                 </TabsContent>
+                
+                {card.contentHtml && (
+                  <TabsContent value="full-content">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Full Card Details</CardTitle>
+                        <CardDescription>
+                          Complete information about the {card.name}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div 
+                          className="prose prose-blue max-w-none"
+                          dangerouslySetInnerHTML={{ __html: card.contentHtml }}
+                        />
+                        
+                        {card.youtubeVideoId && (
+                          <div className="mt-8">
+                            <h3 className="text-lg font-medium mb-4">Video Review</h3>
+                            <div className="aspect-w-16 aspect-h-9">
+                              <iframe
+                                src={`https://www.youtube.com/embed/${card.youtubeVideoId}`}
+                                title={`${card.name} Video Review`}
+                                className="w-full rounded-lg"
+                                style={{ height: '400px' }}
+                                allowFullScreen
+                              ></iframe>
+                            </div>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                )}
               </Tabs>
             </div>
             

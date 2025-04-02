@@ -41,27 +41,37 @@ export function ArticleForm({ article, onSuccess }: ArticleFormProps) {
     title: z.string().min(5, "Title must be at least 5 characters."),
     slug: z.string().min(5, "Slug must be at least 5 characters.").regex(/^[a-z0-9-]+$/, "Slug must contain only lowercase letters, numbers, and hyphens."),
     content: z.string().min(100, "Content must be at least 100 characters."),
+    contentHtml: z.string().optional(),
     excerpt: z.string().min(10, "Excerpt must be at least 10 characters.").max(200, "Excerpt must be at most 200 characters."),
     imageUrl: z.string().url("Must be a valid URL.").optional().or(z.literal("")),
-    publishDate: z.string().transform(val => new Date(val)),
+    publishDate: z.string(),
     category: z.string().min(1, "Category is required"),
+    youtubeVideoId: z.string().optional().or(z.literal("")),
   });
 
   // Initialize form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: article ? {
-      ...article,
+      title: article.title,
+      slug: article.slug,
+      content: article.content,
+      excerpt: article.excerpt || "",
       publishDate: article.publishDate instanceof Date ? 
         format(new Date(article.publishDate), "yyyy-MM-dd") : 
         format(new Date(article.publishDate), "yyyy-MM-dd"),
       imageUrl: article.imageUrl || "",
+      contentHtml: article.contentHtml || "",
+      youtubeVideoId: article.youtubeVideoId || "",
+      category: article.category
     } : {
       title: "",
       slug: "",
       content: "",
+      contentHtml: "",
       excerpt: "",
       imageUrl: "",
+      youtubeVideoId: "",
       publishDate: format(new Date(), "yyyy-MM-dd"),
       category: "News",
     },
@@ -152,6 +162,26 @@ export function ArticleForm({ article, onSuccess }: ArticleFormProps) {
           
           <FormField
             control={form.control}
+            name="youtubeVideoId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>YouTube Video ID</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="e.g. dQw4w9WgXcQ (from https://www.youtube.com/watch?v=dQw4w9WgXcQ)" 
+                    {...field} 
+                  />
+                </FormControl>
+                <p className="text-sm text-gray-500 mt-1">
+                  Enter only the video ID from the YouTube URL, not the full URL.
+                </p>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
             name="publishDate"
             render={({ field }) => (
               <FormItem>
@@ -226,6 +256,24 @@ export function ArticleForm({ article, onSuccess }: ArticleFormProps) {
           )}
         />
         
+        <FormField
+          control={form.control}
+          name="contentHtml"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>HTML Content</FormLabel>
+              <FormControl>
+                <Textarea 
+                  placeholder="Enter HTML content for the article. This will override the regular content when displaying the article." 
+                  className="min-h-[200px] font-mono text-sm"
+                  {...field} 
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
         {/* Article Preview */}
         <Card className="overflow-hidden">
           <CardContent className="p-0">
@@ -256,6 +304,19 @@ export function ArticleForm({ article, onSuccess }: ArticleFormProps) {
               <p className="text-gray-600 mb-4">
                 {form.watch("excerpt") || "Article excerpt preview"}
               </p>
+              
+              {form.watch("youtubeVideoId") && (
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <h4 className="text-sm font-medium mb-2">Video Preview:</h4>
+                  <div>
+                    <img 
+                      src={`https://img.youtube.com/vi/${form.watch("youtubeVideoId")}/mqdefault.jpg`}
+                      alt="YouTube thumbnail"
+                      className="rounded-md"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

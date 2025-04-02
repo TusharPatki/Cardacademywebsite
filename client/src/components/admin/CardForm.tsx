@@ -56,6 +56,8 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
     introApr: z.string().optional(),
     regularApr: z.string().min(1, "Regular APR is required."),
     rewardsDescription: z.string().min(10, "Rewards description must be at least 10 characters."),
+    contentHtml: z.string().optional(),
+    youtubeVideoId: z.string().optional(),
     rating: z.string().optional(),
     featured: z.boolean().default(false),
     cardColorFrom: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Must be a valid hex color.").default("#0F4C81"),
@@ -74,6 +76,8 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
       introApr: card.introApr || "",
       regularApr: card.regularApr || "",
       rewardsDescription: card.rewardsDescription || "",
+      contentHtml: card.contentHtml || "",
+      youtubeVideoId: card.youtubeVideoId || "",
       rating: card.rating || "",
       featured: card.featured === true,
       cardColorFrom: card.cardColorFrom || "#0F4C81",
@@ -87,6 +91,8 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
       introApr: "",
       regularApr: "",
       rewardsDescription: "",
+      contentHtml: "",
+      youtubeVideoId: "",
       rating: "",
       featured: false,
       cardColorFrom: "#0F4C81",
@@ -331,6 +337,44 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
                   {...field} 
                 />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <FormField
+          control={form.control}
+          name="contentHtml"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>HTML Content</FormLabel>
+              <FormControl>
+                <Textarea 
+                  placeholder="Enter HTML content for the card details page." 
+                  className="min-h-[200px] font-mono text-sm"
+                  {...field} 
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <FormField
+          control={form.control}
+          name="youtubeVideoId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>YouTube Video ID</FormLabel>
+              <FormControl>
+                <Input 
+                  placeholder="e.g. dQw4w9WgXcQ (from https://www.youtube.com/watch?v=dQw4w9WgXcQ)" 
+                  {...field} 
+                />
+              </FormControl>
+              <p className="text-sm text-gray-500 mt-1">
+                Enter only the video ID from the YouTube URL, not the full URL.
+              </p>
               <FormMessage />
             </FormItem>
           )}

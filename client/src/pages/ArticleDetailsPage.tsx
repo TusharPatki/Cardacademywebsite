@@ -109,13 +109,35 @@ export default function ArticleDetailsPage() {
                     {article.title}
                   </h1>
                   
-                  <div className="prose max-w-none">
-                    {article.content.split('\n').map((paragraph, index) => (
-                      <p key={index} className="mb-4">
-                        {paragraph}
-                      </p>
-                    ))}
-                  </div>
+                  {article.contentHtml ? (
+                    <div 
+                      className="prose prose-blue max-w-none"
+                      dangerouslySetInnerHTML={{ __html: article.contentHtml }}
+                    />
+                  ) : (
+                    <div className="prose max-w-none">
+                      {article.content.split('\n').map((paragraph, index) => (
+                        <p key={index} className="mb-4">
+                          {paragraph}
+                        </p>
+                      ))}
+                    </div>
+                  )}
+                  
+                  {article.youtubeVideoId && (
+                    <div className="mt-8">
+                      <h3 className="text-lg font-medium mb-4">Video Content</h3>
+                      <div className="aspect-w-16 aspect-h-9">
+                        <iframe
+                          src={`https://www.youtube.com/embed/${article.youtubeVideoId}`}
+                          title={article.title}
+                          className="w-full rounded-lg"
+                          style={{ height: '400px' }}
+                          allowFullScreen
+                        ></iframe>
+                      </div>
+                    </div>
+                  )}
                   
                   <div className="mt-8 pt-6 border-t border-gray-200">
                     <div className="flex items-center justify-between">
