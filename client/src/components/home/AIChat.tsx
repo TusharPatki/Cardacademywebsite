@@ -8,11 +8,15 @@ import { useToast } from "@/hooks/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { type ChatResponse } from "@/lib/types";
 import ReactMarkdown from "react-markdown";
+import { Spinner } from "@/components/ui/spinner";
+// We don't need SyntaxHighlighter imports anymore
+// Using simpler styling for code blocks
 
 interface Message {
   role: "user" | "assistant";
   content: string;
   citations?: string[];
+  provider?: "gemini" | "perplexity" | "error";
 }
 
 export function AIChat() {
@@ -63,7 +67,8 @@ export function AIChat() {
         { 
           role: "assistant", 
           content: data.response,
-          citations: data.citations 
+          citations: data.citations,
+          provider: data.provider
         },
       ]);
     } catch (error) {
@@ -96,7 +101,7 @@ export function AIChat() {
         </Button>
       </CardHeader>
       
-      <ScrollArea ref={scrollAreaRef} className="h-64 p-4 bg-gray-50">
+      <ScrollArea ref={scrollAreaRef} className="h-96 p-4 bg-gray-50">
         {messages.map((message, index) => (
           <div
             key={index}
@@ -115,32 +120,109 @@ export function AIChat() {
                 )}
               </div>
             </div>
-            <div className={`p-3 rounded-lg shadow-sm max-w-md ${
+            <div className={`p-3 rounded-lg shadow-sm ${
               message.role === "user" 
-                ? "bg-primary text-white" 
-                : "bg-white text-gray-800"
+                ? "bg-primary text-white max-w-md" 
+                : "bg-white text-gray-800 max-w-[90%]"
             }`}>
               {message.role === "user" ? (
                 <p>{message.content}</p>
               ) : (
-                <div className="prose prose-sm max-w-none">
-                  <ReactMarkdown>{message.content}</ReactMarkdown>
+                <div className="prose prose-sm max-w-none overflow-x-auto prose-headings:mt-4 prose-headings:mb-2">
+                  <ReactMarkdown
+                    components={{
+                      table: ({ node, ...props }) => (
+                        <div className="overflow-x-auto my-4">
+                          <table className="border-collapse border border-gray-300 w-full" {...props} />
+                        </div>
+                      ),
+                      thead: ({ node, ...props }) => (
+                        <thead className="bg-gray-100" {...props} />
+                      ),
+                      tbody: ({ node, ...props }) => (
+                        <tbody {...props} />
+                      ),
+                      tr: ({ node, ...props }) => (
+                        <tr className="border-b border-gray-300" {...props} />
+                      ),
+                      th: ({ node, ...props }) => (
+                        <th className="border border-gray-300 px-4 py-2 text-left font-semibold" {...props} />
+                      ),
+                      td: ({ node, ...props }) => (
+                        <td className="border border-gray-300 px-4 py-2" {...props} />
+                      ),
+                      code({ children, className }) {
+                        const match = /language-(\w+)/.exec(className || '');
+                        const isMultiLine = String(children).includes('\n');
+                        
+                        return isMultiLine ? (
+                          <div className="my-4 p-4 bg-gray-100 rounded-md overflow-x-auto whitespace-pre">
+                            <code className="text-sm font-mono text-gray-800">
+                              {String(children).replace(/\n$/, '')}
+                            </code>
+                          </div>
+                        ) : (
+                          <code className={`${className || ''} px-1 py-0.5 bg-gray-100 rounded text-gray-800`}>
+                            {children}
+                          </code>
+                        );
+                      },
+                      h3: ({ node, ...props }) => (
+                        <h3 className="text-lg font-semibold mt-6 mb-2 text-gray-800" {...props} />
+                      ),
+                      h4: ({ node, ...props }) => (
+                        <h4 className="text-base font-semibold mt-4 mb-2 text-gray-800" {...props} />
+                      ),
+                      p: ({ node, ...props }) => (
+                        <p className="my-2" {...props} />
+                      ),
+                    }}
+                  >
+                    {message.content}
+                  </ReactMarkdown>
                   
-                  {message.citations && message.citations.length > 0 && (
-                    <div className="mt-2 text-xs text-gray-500">
-                      <p className="font-medium">Sources:</p>
-                      <ul className="list-disc pl-4">
-                        {message.citations.map((citation, i) => (
-                          <li key={i}>{citation}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+                  <div className="mt-2 text-xs text-gray-500">
+                    {message.provider && (
+                      <div className="mb-1">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                          Powered by {message.provider === 'perplexity' ? 'Perplexity' : 'Gemini'}
+                        </span>
+                      </div>
+                    )}
+                    
+                    {message.citations && message.citations.length > 0 && (
+                      <>
+                        <p className="font-medium">Sources:</p>
+                        <ul className="list-disc pl-4">
+                          {message.citations.map((citation, i) => (
+                            <li key={i}>{citation}</li>
+                          ))}
+                        </ul>
+                      </>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
           </div>
         ))}
+        
+        {/* Loading indicator */}
+        {isLoading && (
+          <div className="flex items-start mb-4">
+            <div className="flex-shrink-0 mr-3">
+              <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center">
+                <Bot className="h-4 w-4 text-white" />
+              </div>
+            </div>
+            <div className="p-3 rounded-lg shadow-sm bg-white text-gray-800 max-w-[90%]">
+              <div className="flex items-center space-x-2">
+                <Spinner size="sm" />
+                <span className="text-sm text-gray-500">Thinking...</span>
+              </div>
+            </div>
+          </div>
+        )}
       </ScrollArea>
       
       <CardFooter className="border-t p-4">
@@ -157,11 +239,13 @@ export function AIChat() {
               disabled={isLoading}
               className="rounded-l-none"
             >
-              <Send className="h-4 w-4" />
+              {isLoading ? <Spinner size="sm" className="text-white" /> : <Send className="h-4 w-4" />}
             </Button>
           </div>
           <p className="text-xs text-gray-500 mt-2">
-            Powered by Gemini AI - Your financial data remains private
+            Powered by {messages.length > 0 && messages.some(m => m.provider === 'perplexity')
+              ? 'Perplexity AI' 
+              : 'Gemini AI'} - Your financial data remains private
           </p>
         </form>
       </CardFooter>

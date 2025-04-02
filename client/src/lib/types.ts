@@ -31,6 +31,7 @@ export interface AuthContextType {
 export interface ChatResponse {
   response: string;
   citations?: string[];
+  provider?: "gemini" | "perplexity" | "error";
 }
 
 // Combined types for displaying data

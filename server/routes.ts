@@ -556,7 +556,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // AI Chat using Gemini API
+  // AI Chat using Gemini API with Perplexity as fallback
   app.post("/api/chat", async (req, res) => {
     try {
       const { message } = req.body;
@@ -566,35 +566,89 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       try {
-        // Import the generateResponse function from gemini.ts
-        const { generateResponse } = await import('./gemini');
-        
-        // Call Gemini API to generate response
-        const result = await generateResponse([
-          { role: "user", content: message }
-        ]);
-        
-        return res.status(200).json({ 
-          response: result.content,
-          citations: result.citations 
-        });
-      } catch (error: any) {
-        console.error("Gemini API error:", error);
-        
-        // Fallback response if API call fails
-        if (error.message.includes("Rate limit exceeded")) {
-          return res.status(429).json({ 
-            response: "I'm currently receiving too many requests. Please try again in a minute." 
-          });
+        // First try Gemini API
+        if (process.env.GEMINI_API_KEY) {
+          try {
+            // Import the generateResponse function from gemini.ts
+            const { generateResponse } = await import('./gemini');
+            
+            // Call Gemini API to generate response
+            const result = await generateResponse([
+              { role: "user", content: message }
+            ]);
+            
+            return res.status(200).json({ 
+              response: result.content,
+              citations: result.citations,
+              provider: "gemini"
+            });
+          } catch (geminiError: any) {
+            console.error("Gemini API error:", geminiError);
+            
+            // If it's a rate limit error, throw to try Perplexity
+            if (geminiError.message.includes("Rate limit exceeded")) {
+              throw geminiError;
+            }
+            
+            // For other Gemini-specific errors, try Perplexity as fallback
+          }
         }
         
-        // Handle other API errors gracefully
+        // Try Perplexity as fallback
+        if (process.env.PERPLEXITY_API_KEY) {
+          try {
+            // Import the generateResponse function from perplexity.ts
+            const { generateResponse } = await import('./perplexity');
+            
+            // Call Perplexity API to generate response
+            const result = await generateResponse([
+              { role: "system", content: "You are a credit card expert focusing on the Indian market. Provide detailed, helpful information about credit cards, their benefits, and how to choose the best card based on user needs." },
+              { role: "user", content: message }
+            ]);
+            
+            return res.status(200).json({ 
+              response: result.response,
+              citations: result.citations,
+              provider: "perplexity"
+            });
+          } catch (perplexityError: any) {
+            console.error("Perplexity API error:", perplexityError);
+            
+            // Handle Perplexity rate limit errors
+            if (perplexityError.message.includes("Rate limit exceeded")) {
+              return res.status(429).json({ 
+                response: "I'm currently receiving too many requests. Please try again in a minute.",
+                provider: "error" 
+              });
+            }
+            
+            // Let it fall through to the generic error handler
+            throw perplexityError;
+          }
+        }
+        
+        // If we get here, neither API is available
+        if (!process.env.GEMINI_API_KEY && !process.env.PERPLEXITY_API_KEY) {
+          return res.status(500).json({ 
+            response: "AI services are not configured. Please contact the administrator.",
+            provider: "error"
+          });
+        } else {
+          // Handle case where both APIs failed for reasons other than rate limiting
+          return res.status(200).json({ 
+            response: "I'm having trouble connecting to my knowledge base right now. Let me help you with some general advice about credit cards. What specific features are you looking for?",
+            provider: "error"
+          });
+        }
+      } catch (error: any) {
+        console.error("AI Chat API error:", error);
+        
+        // Final fallback for any unexpected errors
         return res.status(200).json({ 
-          response: "I'm having trouble connecting to my knowledge base right now. Let me help you with some general advice about credit cards. What specific features are you looking for?"
+          response: "I apologize, but I'm experiencing technical difficulties. Please try again later or ask about something else.",
+          provider: "error"
         });
       }
-      
-      return res.status(200).json({ response: message });
     } catch (error) {
       console.error("Chat error:", error);
       return res.status(500).json({ message: "Server error" });
