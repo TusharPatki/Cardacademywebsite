@@ -407,21 +407,21 @@ export default function CardDetailsPage() {
                           Complete information about the {card.name}
                         </CardDescription>
                       </CardHeader>
-                      <CardContent>
+                      <CardContent className="px-4 sm:px-6">
                         <div 
-                          className="prose prose-blue max-w-none"
+                          className="prose prose-blue max-w-none overflow-x-auto"
+                          style={{ width: '100%', overflowWrap: 'break-word' }}
                           dangerouslySetInnerHTML={{ __html: card.contentHtml }}
                         />
                         
                         {card.youtubeVideoId && (
                           <div className="mt-8">
                             <h3 className="text-lg font-medium mb-4">Video Review</h3>
-                            <div className="aspect-w-16 aspect-h-9">
+                            <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
                               <iframe
                                 src={`https://www.youtube.com/embed/${extractYoutubeVideoId(card.youtubeVideoId)}`}
                                 title={`${card.name} Video Review`}
-                                className="w-full rounded-lg"
-                                style={{ height: '400px' }}
+                                className="absolute top-0 left-0 w-full h-full rounded-lg"
                                 allowFullScreen
                               ></iframe>
                             </div>
@@ -528,7 +528,8 @@ export default function CardDetailsPage() {
               </DialogDescription>
             </DialogHeader>
             <div 
-              className="prose prose-blue max-w-none mt-4"
+              className="prose prose-blue max-w-none mt-4 px-1 overflow-x-auto"
+              style={{ width: '100%', overflowWrap: 'break-word' }}
               dangerouslySetInnerHTML={{ __html: card.contentHtml }}
             />
             <DialogFooter className="mt-6">
