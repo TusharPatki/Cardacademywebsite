@@ -58,10 +58,11 @@ function enhanceMarkdownTables(content: string): string {
     return match; // Return original if we can't fix it
   });
   
-  // Fix headings without proper spacing
-  enhanced = enhanced.replace(/###([^\n]+)/g, '### $1');
-  enhanced = enhanced.replace(/##([^\n]+)/g, '## $1');
-  enhanced = enhanced.replace(/#([^\n]+)/g, '# $1');
+  // Fix headings without proper spacing and remove duplicate hashes
+  enhanced = enhanced.replace(/#+\s*#*\s*([^\n]+)/g, (match, content) => {
+    const hashCount = (match.match(/#/g) || []).length;
+    return '#'.repeat(Math.min(hashCount, 3)) + ' ' + content.trim();
+  });
   
   return enhanced;
 }
