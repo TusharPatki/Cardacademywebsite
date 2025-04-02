@@ -60,9 +60,12 @@ export function Navbar() {
           <div className="flex items-center">
             <Link href="/">
               <a className="flex-shrink-0 flex items-center">
-                <span className="text-primary font-bold text-2xl">
-                  Card<span className="text-accent">Savvy</span>
-                </span>
+                <div className="flex items-center">
+                  <img src="/src/assets/logo.png" alt="CardAcademy" className="h-8 w-auto mr-2" />
+                  <span className="text-primary font-bold text-2xl">
+                    Card<span className="text-blue-900">Academy</span>
+                  </span>
+                </div>
               </a>
             </Link>
             
