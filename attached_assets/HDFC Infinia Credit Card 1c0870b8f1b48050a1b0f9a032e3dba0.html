@@ -1,0 +1,690 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>HDFC Infinia Credit Card</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-default_background {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray_background {
+	background: rgba(248, 248, 247, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(248, 243, 252, 1);
+}
+.highlight-pink_background {
+	background: rgba(252, 241, 246, 1);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(248, 248, 247, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(248, 243, 252, 1);
+}
+.block-color-pink_background {
+	background: rgba(252, 241, 246, 1);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-uiBlue { background-color: undefined; }
+.select-value-color-pink { background-color: rgba(225, 136, 179, 0.27); }
+.select-value-color-purple { background-color: rgba(168, 129, 197, 0.27); }
+.select-value-color-green { background-color: rgba(123, 183, 129, 0.27); }
+.select-value-color-gray { background-color: rgba(84, 72, 49, 0.15); }
+.select-value-color-transparentGray { background-color: undefined; }
+.select-value-color-translucentGray { background-color: undefined; }
+.select-value-color-orange { background-color: rgba(224, 124, 57, 0.27); }
+.select-value-color-brown { background-color: rgba(210, 162, 141, 0.35); }
+.select-value-color-red { background-color: rgba(244, 171, 159, 0.4); }
+.select-value-color-yellow { background-color: rgba(236, 191, 66, 0.39); }
+.select-value-color-blue { background-color: rgba(93, 165, 206, 0.27); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="1c0870b8-f1b4-8050-a1b0-f9a032e3dba0" class="page sans"><header><h1 class="page-title">HDFC Infinia Credit Card</h1><p class="page-description"></p><table class="properties"><tbody><tr class="property-row property-row-person"><th><span class="icon property-icon"><svg aria-hidden="true" role="graphics-symbol" viewBox="0 0 16 16" style="width:14px;height:14px;display:block;fill:rgba(55, 53, 47, 0.45);flex-shrink:0" class="typesPerson"><path d="M10.9536 7.90088C12.217 7.90088 13.2559 6.79468 13.2559 5.38525C13.2559 4.01514 12.2114 2.92017 10.9536 2.92017C9.70142 2.92017 8.65137 4.02637 8.65698 5.39087C8.6626 6.79468 9.69019 7.90088 10.9536 7.90088ZM4.4231 8.03003C5.52368 8.03003 6.42212 7.05859 6.42212 5.83447C6.42212 4.63843 5.51245 3.68945 4.4231 3.68945C3.33374 3.68945 2.41846 4.64966 2.41846 5.84009C2.42407 7.05859 3.32251 8.03003 4.4231 8.03003ZM1.37964 13.168H5.49561C4.87231 12.292 5.43384 10.6074 6.78711 9.51807C6.18628 9.14746 5.37769 8.87231 4.4231 8.87231C1.95239 8.87231 0.262207 10.6917 0.262207 12.1628C0.262207 12.7974 0.548584 13.168 1.37964 13.168ZM7.50024 13.168H14.407C15.4009 13.168 15.7322 12.8423 15.7322 12.2864C15.7322 10.8489 13.8679 8.88354 10.9536 8.88354C8.04492 8.88354 6.17505 10.8489 6.17505 12.2864C6.17505 12.8423 6.50635 13.168 7.50024 13.168Z"></path></svg></span>Assigned to</th><td><span class="user"><img src="https://lh3.googleusercontent.com/a/ACg8ocLKSOs5LqaZ84Yo-9D2M02UU0J1nohO1vXKSi-jPbRR8Krbrg=s100" class="icon user-icon"/>Tushar notion</span></td></tr><tr class="property-row property-row-select"><th><span class="icon property-icon"><svg aria-hidden="true" role="graphics-symbol" viewBox="0 0 16 16" style="width:14px;height:14px;display:block;fill:rgba(55, 53, 47, 0.45);flex-shrink:0" class="typesSelect"><path d="M8 15.126C11.8623 15.126 15.0615 11.9336 15.0615 8.06445C15.0615 4.20215 11.8623 1.00293 7.99316 1.00293C4.13086 1.00293 0.938477 4.20215 0.938477 8.06445C0.938477 11.9336 4.1377 15.126 8 15.126ZM8 13.7383C4.85547 13.7383 2.33301 11.209 2.33301 8.06445C2.33301 4.91992 4.84863 2.39746 7.99316 2.39746C11.1377 2.39746 13.6738 4.91992 13.6738 8.06445C13.6738 11.209 11.1445 13.7383 8 13.7383ZM7.62402 10.6348C7.79492 10.915 8.20508 10.9287 8.37598 10.6348L10.666 6.73145C10.8574 6.41016 10.7002 6.04102 10.3652 6.04102H5.62793C5.29297 6.04102 5.14941 6.43066 5.32031 6.73145L7.62402 10.6348Z"></path></svg></span>Bank</th><td><span class="selected-value select-value-color-gray">HDFC Bank</span></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><svg aria-hidden="true" role="graphics-symbol" viewBox="0 0 16 16" style="width:14px;height:14px;display:block;fill:rgba(55, 53, 47, 0.45);flex-shrink:0" class="typesMultipleSelect"><path d="M1.91602 4.83789C2.44238 4.83789 2.87305 4.40723 2.87305 3.87402C2.87305 3.34766 2.44238 2.91699 1.91602 2.91699C1.38281 2.91699 0.952148 3.34766 0.952148 3.87402C0.952148 4.40723 1.38281 4.83789 1.91602 4.83789ZM5.1084 4.52344H14.3984C14.7607 4.52344 15.0479 4.23633 15.0479 3.87402C15.0479 3.51172 14.7607 3.22461 14.3984 3.22461H5.1084C4.74609 3.22461 4.45898 3.51172 4.45898 3.87402C4.45898 4.23633 4.74609 4.52344 5.1084 4.52344ZM1.91602 9.03516C2.44238 9.03516 2.87305 8.60449 2.87305 8.07129C2.87305 7.54492 2.44238 7.11426 1.91602 7.11426C1.38281 7.11426 0.952148 7.54492 0.952148 8.07129C0.952148 8.60449 1.38281 9.03516 1.91602 9.03516ZM5.1084 8.7207H14.3984C14.7607 8.7207 15.0479 8.43359 15.0479 8.07129C15.0479 7.70898 14.7607 7.42188 14.3984 7.42188H5.1084C4.74609 7.42188 4.45898 7.70898 4.45898 8.07129C4.45898 8.43359 4.74609 8.7207 5.1084 8.7207ZM1.91602 13.2324C2.44238 13.2324 2.87305 12.8018 2.87305 12.2686C2.87305 11.7422 2.44238 11.3115 1.91602 11.3115C1.38281 11.3115 0.952148 11.7422 0.952148 12.2686C0.952148 12.8018 1.38281 13.2324 1.91602 13.2324ZM5.1084 12.918H14.3984C14.7607 12.918 15.0479 12.6309 15.0479 12.2686C15.0479 11.9062 14.7607 11.6191 14.3984 11.6191H5.1084C4.74609 11.6191 4.45898 11.9062 4.45898 12.2686C4.45898 12.6309 4.74609 12.918 5.1084 12.918Z"></path></svg></span>Keywords</th><td></td></tr><tr class="property-row property-row-status"><th><span class="icon property-icon"><svg aria-hidden="true" role="graphics-symbol" viewBox="0 0 16 16" style="width:14px;height:14px;display:block;fill:rgba(55, 53, 47, 0.45);flex-shrink:0" class="typesStatus"><path d="M8.75488 1.02344C8.75488 0.613281 8.41309 0.264648 8.00293 0.264648C7.59277 0.264648 7.25098 0.613281 7.25098 1.02344V3.11523C7.25098 3.51855 7.59277 3.86719 8.00293 3.86719C8.41309 3.86719 8.75488 3.51855 8.75488 3.11523V1.02344ZM3.91504 5.0293C4.20215 5.31641 4.69434 5.32324 4.97461 5.03613C5.26855 4.74902 5.26855 4.25684 4.98145 3.96973L3.53906 2.52051C3.25195 2.2334 2.7666 2.21973 2.47949 2.50684C2.19238 2.79395 2.18555 3.28613 2.47266 3.57324L3.91504 5.0293ZM10.9629 4.01758C10.6826 4.30469 10.6826 4.79688 10.9697 5.08398C11.2568 5.37109 11.749 5.36426 12.0361 5.07715L13.4854 3.62793C13.7725 3.34082 13.7725 2.84863 13.4785 2.55469C13.1982 2.27441 12.7061 2.27441 12.4189 2.56152L10.9629 4.01758ZM15.0234 8.78906C15.4336 8.78906 15.7822 8.44727 15.7822 8.03711C15.7822 7.62695 15.4336 7.28516 15.0234 7.28516H12.9385C12.5283 7.28516 12.1797 7.62695 12.1797 8.03711C12.1797 8.44727 12.5283 8.78906 12.9385 8.78906H15.0234ZM0.975586 7.28516C0.56543 7.28516 0.223633 7.62695 0.223633 8.03711C0.223633 8.44727 0.56543 8.78906 0.975586 8.78906H3.07422C3.48438 8.78906 3.83301 8.44727 3.83301 8.03711C3.83301 7.62695 3.48438 7.28516 3.07422 7.28516H0.975586ZM12.0361 10.9902C11.749 10.71 11.2568 10.71 10.9629 10.9971C10.6826 11.2842 10.6826 11.7764 10.9697 12.0635L12.4258 13.5127C12.7129 13.7998 13.2051 13.793 13.4922 13.5059C13.7793 13.2256 13.7725 12.7266 13.4854 12.4395L12.0361 10.9902ZM2.52051 12.4395C2.22656 12.7266 2.22656 13.2188 2.50684 13.5059C2.79395 13.793 3.28613 13.7998 3.57324 13.5127L5.02246 12.0703C5.31641 11.7832 5.31641 11.291 5.03613 11.0039C4.74902 10.7168 4.25684 10.71 3.96973 10.9971L2.52051 12.4395ZM8.75488 12.9658C8.75488 12.5557 8.41309 12.207 8.00293 12.207C7.59277 12.207 7.25098 12.5557 7.25098 12.9658V15.0576C7.25098 15.4609 7.59277 15.8096 8.00293 15.8096C8.41309 15.8096 8.75488 15.4609 8.75488 15.0576V12.9658Z"></path></svg></span>Status</th><td><span class="status-value select-value-color-blue"><div class="status-dot status-dot-color-blue"></div>In progress</span></td></tr></tbody></table></header><div class="page-body"><h1 id="1c0870b8-f1b4-815b-8046-c6ca50655a15" class=""><strong>HDFC Infinia Credit Card: The Ultimate Premium Card for Luxury Lifestyle</strong></h1><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="1c0870b8-f1b4-81ba-a1eb-e1e4ee97a705"><div style="font-size:1.5em"><span class="icon">📒</span></div><div style="width:100%"><p id="1c0870b8-f1b4-8119-8c33-fc2371ef8982" class="">The HDFC Infinia Credit Card is one of the most prestigious and exclusive credit cards offered by HDFC Bank. Designed for high-net-worth individuals, this invitation-only card comes packed with premium benefits across travel, dining, and lifestyle categories. Let&#x27;s dive into the key features and benefits of this elite card.</p></div></figure><p id="1c0870b8-f1b4-8177-b4dc-fd4014c43887" class="">
+</p><hr id="1c0870b8-f1b4-8165-bf3a-ca246f19100f"/><h1 id="1c0870b8-f1b4-811d-bf32-d2a546624c01" class="block-color-default">Enter Credit Card Name</h1><div id="1c0870b8-f1b4-81b7-bf99-da7f20e11a3c" class="column-list"><div id="1c0870b8-f1b4-811e-9ada-e50888785a82" style="width:68.75%" class="column"><figure class="block-color-default_background callout" style="white-space:pre-wrap;display:flex" id="1c0870b8-f1b4-816e-bbc9-d9ee2f48c072"><div style="width:100%"><p id="1c0870b8-f1b4-815a-b430-f199a838fa6c" class="">Enter card image here</p><figure id="1c0870b8-f1b4-8026-9dc2-ee652d4346e5" class="image"><a href="HDFC%20Infinia%20Credit%20Card%201c0870b8f1b48050a1b0f9a032e3dba0/image.png"><img style="width:432px" src="HDFC%20Infinia%20Credit%20Card%201c0870b8f1b48050a1b0f9a032e3dba0/image.png"/></a></figure></div></figure><p id="1c0870b8-f1b4-8154-8750-e7b7f1d90901" class="">
+</p></div><div id="1c0870b8-f1b4-8101-ad9f-f12bfc3ffdfe" style="width:31.250000000000007%" class="column"><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="1c0870b8-f1b4-81e1-b718-faef0f48c015"><div style="font-size:1.5em"><img class="icon" src="https://www.notion.so/icons/airplane_blue.svg"/></div><div style="width:100%"><h1 id="1c0870b8-f1b4-8183-ad50-ed691f1cb125" class="">Apply Now</h1></div></figure><h3 id="1c0870b8-f1b4-81c8-ae89-f5c970c3b372" class=""><strong>Joining Fee</strong></h3><p id="1c0870b8-f1b4-80d7-baab-d9087a7774ba" class="">₹12,500 + GST</p><h3 id="1c0870b8-f1b4-818a-aba5-e6dcacb59fe2" class=""><strong>Renewal Fee</strong></h3><p id="1c0870b8-f1b4-80a9-8271-d717c003a84b" class="">₹12,500 + GST</p><h3 id="1c0870b8-f1b4-819e-8bb2-d7d326efab57" class=""><strong>Best Suited For</strong></h3><p id="1c0870b8-f1b4-817b-b76f-fc5e8656bf64" class="">Travel | Dining | Shopping</p><h3 id="1c0870b8-f1b4-81d1-9c91-d0b6dc960fa8" class=""><strong>Reward Type</strong></h3><p id="1c0870b8-f1b4-81f7-ad3f-f7fca948bc40" class="">Reward Points</p><h3 id="1c0870b8-f1b4-8137-8500-d28b25500a27" class=""><strong>Welcome Benefits</strong></h3><p id="1c0870b8-f1b4-8104-8928-c49a31a0f8f9" class="">Welcome bonus of 12,500 Reward Points and complimentary Club Marriott membership for the first year offering 20% discounts on dining and stay in the Asia-Pacific region.</p></div></div><hr id="1c0870b8-f1b4-814d-924e-fc86217d48af"/><p id="1c0870b8-f1b4-812e-a385-c0e7350b6b42" class="">
+</p><h1 id="1c0870b8-f1b4-8111-bc3b-c890a0d341b4" class="block-color-blue">Rewards and Benefits</h1><table id="1c0870b8-f1b4-81a1-b3d2-cdce5ccd19fd" class="simple-table"><tbody><tr id="1c0870b8-f1b4-815d-920f-c9ec8584974d"><th id=":XO[" class="simple-table-header-color simple-table-header" style="width:652px"><strong>Movies &amp; Dinings</strong></th><td id="u|?g" class="" style="width:684px">1 + 1 Complimentary Buffet at ITC Hotels and Up to ₹750 With Swiggy Dineout</td></tr><tr id="1c0870b8-f1b4-8143-a611-e9551c5aa1cd"><th id=":XO[" class="simple-table-header-color simple-table-header" style="width:652px"><strong>Reward Rate</strong></th><td id="u|?g" class="" style="width:684px">5 Reward Points on every retail spend of Rs. 150,  reward rate of up to 3.3%</td></tr><tr id="1c0870b8-f1b4-81db-861b-fc470bdaeb4c"><th id=":XO[" class="simple-table-header-color simple-table-header" style="width:652px"><strong>Reward Redemption</strong></th><td id="u|?g" class="" style="width:684px">RPs can be redeemed for flight and hotel bookings via SmartBuy (1 RP = Re. 1), Airmiles through net banking (1 RP = 1 Airmile), products and vouchers via net banking or SmartBuy (1 RP = Rs. 0.50), Apple and Tanishq vouchers (1 RP = Re. 1) cashback (1 RP = Rs. 0.30)</td></tr><tr id="1c0870b8-f1b4-81ea-93c3-f8bf1ef0eaaf"><th id=":XO[" class="simple-table-header-color simple-table-header" style="width:652px"><strong>Domestic Lounge Access</strong></th><td id="u|?g" class="" style="width:684px">Unlimited Free Domestic Airport Lounge Access</td></tr><tr id="1c0870b8-f1b4-819a-b610-eef94116ffba"><th id=":XO[" class="simple-table-header-color simple-table-header" style="width:652px"><strong>Golf Access</strong></th><td id="u|?g" class="" style="width:684px">Unlimited complimentary golf games at leading golf courses across India and abroad. Unlimited golf coaching at multiple golf courses across India</td></tr><tr id="1c0870b8-f1b4-815f-8f16-eaf3f2be9d3d"><th id=":XO[" class="simple-table-header-color simple-table-header" style="width:652px"><strong>International Lounge Access</strong></th><td id="u|?g" class="" style="width:684px">Unlimited Complimentary International Lounge Access for Primary and Add-On Cardholders Across the Globe with a Priority Pass</td></tr><tr id="1c0870b8-f1b4-81e7-89d9-c9451456dea1"><th id=":XO[" class="simple-table-header-color simple-table-header" style="width:652px"><strong>Travel</strong></th><td id="u|?g" class="" style="width:684px">Complimentary Priority Pass Membership</td></tr><tr id="1c0870b8-f1b4-81b3-91b8-c3b637bd0fcf"><th id=":XO[" class="simple-table-header-color simple-table-header" style="width:652px"><strong>Insurance Benefits</strong></th><td id="u|?g" class="" style="width:684px">Insurance cover worth Rs. 3 crores against accidental air death, a cover worth Rs. 50 lakh against medical emergencies during international air travel, and credit shield cover worth Rs. 9 lakh</td></tr></tbody></table><hr id="1c0870b8-f1b4-8124-9c53-d6f2da2a89e7"/><h1 id="1c0870b8-f1b4-8168-a67e-da81802dc461" class="block-color-blue">Fees &amp; Charges</h1><table id="1c0870b8-f1b4-81be-8bb8-ebe8c7842330" class="simple-table"><tbody><tr id="1c0870b8-f1b4-8122-9249-e54e48cb2f22"><th id=":XO[" class="simple-table-header-color simple-table-header" style="width:658px"><strong>Spend-Based Waiver</strong></th><td id="u|?g" class="" style="width:686px">Renewal Fee Waived on Spends of ₹10 Lakh</td></tr><tr id="1c0870b8-f1b4-81f1-8802-d38d1981d07a"><th id=":XO[" class="simple-table-header-color simple-table-header" style="width:658px"><strong>Foreign Currency Markup</strong></th><td id="u|?g" class="" style="width:686px">Nil</td></tr><tr id="1c0870b8-f1b4-8103-b80a-c74a9703c8cd"><th id=":XO[" class="simple-table-header-color simple-table-header" style="width:658px"><strong>Reward Redemption Fees</strong></th><td id="u|?g" class="" style="width:686px">2% + GST (~2.36%)</td></tr><tr id="1c0870b8-f1b4-814b-bcef-e236b0038a9c"><th id=":XO[" class="simple-table-header-color simple-table-header" style="width:658px"><strong>Interest Rates</strong></th><td id="u|?g" class="" style="width:686px">1.99% per month or 23.8% annualized</td></tr><tr id="1c0870b8-f1b4-81be-8c41-d18b6378c68f"><th id=":XO[" class="simple-table-header-color simple-table-header" style="width:658px"><strong>Fuel Surcharge</strong></th><td id="u|?g" class="" style="width:686px">1% Fuel Surcharge Waiver (Up to ₹1,000 Each Statement Cycle)</td></tr><tr id="1c0870b8-f1b4-8108-836a-f253eba4687b"><th id=":XO[" class="simple-table-header-color simple-table-header" style="width:658px"><strong>Cash Advance Surcharge</strong></th><td id="u|?g" class="" style="width:686px">NIL (Interests charges applicable)</td></tr></tbody></table><hr id="1c0870b8-f1b4-8114-b59d-ec449bde4afa"/><h1 id="1c0870b8-f1b4-8101-8fff-ecf065f25989" class="block-color-blue">Product Details</h1><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="1c0870b8-f1b4-8199-b296-c98fb6ce10ac"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%"><ul id="1c0870b8-f1b4-80f6-aa2c-ef673f953c1f" class="bulleted-list"><li style="list-style-type:disc">1 year complimentary Club Marriott membership.</li></ul><ul id="1c0870b8-f1b4-8059-a3d5-e50fd40c5561" class="bulleted-list"><li style="list-style-type:disc">12,500 Reward Points as an introductory benefit.</li></ul><ul id="1c0870b8-f1b4-8038-a644-d1dac726902e" class="bulleted-list"><li style="list-style-type:disc">Unlimited access to airport lounges across the globe for both primary and add-on cardholders.</li></ul><ul id="1c0870b8-f1b4-80fa-8ae7-d724c4b627c6" class="bulleted-list"><li style="list-style-type:disc">Get 5 Reward Points on every Rs. 150 spent (except fuel transactions) with your HDFC Bank Infinia Card.</li></ul><ul id="1c0870b8-f1b4-80d3-9907-f1b06db0d1d7" class="bulleted-list"><li style="list-style-type:disc">24×7 global concierge service.</li></ul><ul id="1c0870b8-f1b4-802a-979e-dfac4e0b4fa4" class="bulleted-list"><li style="list-style-type:disc">Unlimited golf games at leading golf destinations in India and abroad.</li></ul><ul id="1c0870b8-f1b4-80d7-ac59-e6a2fa4d6f9f" class="bulleted-list"><li style="list-style-type:disc">1+1 complimentary buffet on weekends at participating ITC hotels.</li></ul><ul id="1c0870b8-f1b4-80eb-bccb-fd42f1060905" class="bulleted-list"><li style="list-style-type:disc">2+1 complimentary night stay at participating ITC hotels.</li></ul><ul id="1c0870b8-f1b4-8036-96c1-dcce0b4ce597" class="bulleted-list"><li style="list-style-type:disc">Spend-based waiver annual membership fee.</li></ul></div></figure><hr id="1c0870b8-f1b4-81e4-b72d-ddef1fde3efb"/><h1 id="1c0870b8-f1b4-815d-b279-cc7382d9ad69" class="">Pros and Cons</h1><div id="1c0870b8-f1b4-8178-a713-c7278bcd1688" class="column-list"><div id="1c0870b8-f1b4-8142-83a1-d2714b464890" style="width:50%" class="column"><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="1c0870b8-f1b4-811a-9639-e71ee002ef32"><div style="font-size:1.5em"><span class="icon">🦾</span></div><div style="width:100%"><p id="1c0870b8-f1b4-8146-946e-e45300231bfa" class="">Add Pros </p><ul id="1c0870b8-f1b4-8026-993c-ebc6444c21df" class="bulleted-list"><li style="list-style-type:disc">Unlimited lounge access at domestic and select foreign airports.</li></ul><ul id="1c0870b8-f1b4-8046-8d96-eabac10ce48f" class="bulleted-list"><li style="list-style-type:disc">Unlimited complimentary golf games at premier golf courses.</li></ul></div></figure></div><div id="1c0870b8-f1b4-81bc-9009-cd5937e4dee5" style="width:50%" class="column"><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="1c0870b8-f1b4-81e4-b3d3-ee76b508d880"><div style="font-size:1.5em"><span class="icon">🚧</span></div><div style="width:100%"><p id="1c0870b8-f1b4-8180-942d-f93e430710e5" class="">Add cons here</p><ul id="1c0870b8-f1b4-805d-9d61-dc2b0ec0a13c" class="bulleted-list"><li style="list-style-type:disc">Infinia Credit Card is a highly rewarding card that benefits everyone. Although it is considered to be the ultimate card, only those who fulfill the strict eligibility criteria can get it. This can be termed the only drawback of this card.</li></ul></div></figure></div></div><h2 id="1c0870b8-f1b4-80fb-a8f1-ea311901e0a4" class=""><strong>Key Features and Benefits</strong></h2><h2 id="1c0870b8-f1b4-80b6-89c0-c32884f72ba3" class=""><strong>Reward Structure</strong></h2><div id="1c0870b8-f1b4-807b-8b3c-fd9aff430989" class="column-list"><div id="1c0870b8-f1b4-80d4-a9ed-effab9e62c01" style="width:50%" class="column"><h2 id="1c0870b8-f1b4-8091-8693-c62a718853a1" class=""><strong>Base Rewards</strong></h2><ul id="1c0870b8-f1b4-8000-bfc1-e6eaa7c8ff56" class="bulleted-list"><li style="list-style-type:disc">1% cashback on all eligible online and offline spends</li></ul><h2 id="1c0870b8-f1b4-80c2-996b-d5fea8eacc94" class=""><strong>Accelerated Rewards</strong></h2><ul id="1c0870b8-f1b4-80be-bb41-d79c52f0a6f4" class="bulleted-list"><li style="list-style-type:disc">5% cashback on transactions with 10 partner online merchants:<ul id="1c0870b8-f1b4-809f-bf43-c13374b0ddec" class="bulleted-list"><li style="list-style-type:circle">Amazon</li></ul><ul id="1c0870b8-f1b4-8030-aa02-e4c9378ea99d" class="bulleted-list"><li style="list-style-type:circle">BookMyShow</li></ul><ul id="1c0870b8-f1b4-8071-a546-eb903ddb0e56" class="bulleted-list"><li style="list-style-type:circle">Cult.fit</li></ul><ul id="1c0870b8-f1b4-8002-8b80-f76c9987d112" class="bulleted-list"><li style="list-style-type:circle">Flipkart</li></ul><ul id="1c0870b8-f1b4-8067-8350-e85fae6b30e6" class="bulleted-list"><li style="list-style-type:circle">Myntra</li></ul><ul id="1c0870b8-f1b4-8043-aeeb-c305c543a0c2" class="bulleted-list"><li style="list-style-type:circle">Sony LIV</li></ul><ul id="1c0870b8-f1b4-8074-acf0-ea0d67182afa" class="bulleted-list"><li style="list-style-type:circle">Swiggy</li></ul><ul id="1c0870b8-f1b4-8064-ad66-eeb4baa429fe" class="bulleted-list"><li style="list-style-type:circle">Tata CLiQ</li></ul><ul id="1c0870b8-f1b4-80c5-98ab-ecd24e51a67d" class="bulleted-list"><li style="list-style-type:circle">Uber</li></ul><ul id="1c0870b8-f1b4-80bb-b338-c3b76133bbeb" class="bulleted-list"><li style="list-style-type:circle">Zomato</li></ul></li></ul><h2 id="1c0870b8-f1b4-80b3-9cbb-e8ec357549af" class=""><strong>Reward Caps</strong></h2><ul id="1c0870b8-f1b4-806c-aece-f838f7264899" class="bulleted-list"><li style="list-style-type:disc">CashPoints earned under the 5% category are capped at 1,000 CashPoints per statement cycle</li></ul><ul id="1c0870b8-f1b4-8012-91e7-caf0a069cd27" class="bulleted-list"><li style="list-style-type:disc">CashPoints earned under the 1% category are also capped at 1,000 CashPoints per statement cycle</li></ul><ul id="1c0870b8-f1b4-80a8-8323-f50117e2142e" class="bulleted-list"><li style="list-style-type:disc">Maximum of 2,000 CashPoints can be earned in a given statement cycle</li></ul><p id="1c0870b8-f1b4-80ee-97fe-d04f1c6f25da" class="">
+</p></div><div id="1c0870b8-f1b4-80d0-a779-d950ced1f1a6" style="width:50%" class="column"><h2 id="1c0870b8-f1b4-80f2-a0b2-f6954e1a9810" class=""><strong>CashPoint Value</strong></h2><ul id="1c0870b8-f1b4-8095-90ba-d21e83c48c16" class="bulleted-list"><li style="list-style-type:disc">1 CashPoint = ₹1 when redeemed for cashback</li></ul><ul id="1c0870b8-f1b4-808d-8ed8-d31bd8c8bea8" class="bulleted-list"><li style="list-style-type:disc">1 CashPoint = ₹0.30 when redeemed for product catalog or flights/hotels on SmartBuy</li></ul><ul id="1c0870b8-f1b4-805b-b0e8-ce1330e086b4" class="bulleted-list"><li style="list-style-type:disc">1 CashPoint = 0.30 AirMiles when converted to airline miles</li></ul><h2 id="1c0870b8-f1b4-80f2-83bd-e0994d2075a3" class=""><strong>Exclusions</strong></h2><p id="1c0870b8-f1b4-80bd-af8b-c267ded8b741" class="">CashPoints are not earned on:</p><ul id="1c0870b8-f1b4-803f-8df9-c4486d8eaee1" class="bulleted-list"><li style="list-style-type:disc">Fuel purchases</li></ul><ul id="1c0870b8-f1b4-800d-9ba9-defbd6f3493b" class="bulleted-list"><li style="list-style-type:disc">Rent payments</li></ul><ul id="1c0870b8-f1b4-80e7-9518-f12ba89fcd80" class="bulleted-list"><li style="list-style-type:disc">Government-related transactions</li></ul><ul id="1c0870b8-f1b4-80e2-8f6a-ccb2d0f5532c" class="bulleted-list"><li style="list-style-type:disc">EMI transactions</li></ul><ul id="1c0870b8-f1b4-80b7-b11f-e973af1b84b4" class="bulleted-list"><li style="list-style-type:disc">Wallet loading</li></ul><ul id="1c0870b8-f1b4-80f2-bd05-f613b98bb7ad" class="bulleted-list"><li style="list-style-type:disc">Cash advances</li></ul><ul id="1c0870b8-f1b4-8073-9bca-dcf5bcb28f9c" class="bulleted-list"><li style="list-style-type:disc">Payment of card fees</li></ul><ul id="1c0870b8-f1b4-80c0-a1a9-d2ed34a9ca9a" class="bulleted-list"><li style="list-style-type:disc">Smart EMI/Dial an EMI transactions</li></ul><p id="1c0870b8-f1b4-8084-bf97-c5fad8d6aa1a" class="">This reward structure makes the HDFC Millennia Credit Card particularly attractive for frequent online shoppers who use the partner merchants regularly, while still offering decent rewards on other purchases</p><h2 id="1c0870b8-f1b4-80e1-9dc3-ce75e819a8a0" class=""><strong>Redemption</strong></h2><ul id="1c0870b8-f1b4-8039-97c4-ebce42321389" class="bulleted-list"><li style="list-style-type:disc">Minimum 500 CashPoints required for redemption against card&#x27;s statement balance</li></ul><ul id="1c0870b8-f1b4-8064-a7dc-e40c09d8b743" class="bulleted-list"><li style="list-style-type:disc">₹50 fee for each cash against statement redemption request</li></ul><ul id="1c0870b8-f1b4-803d-b4b6-c995a188a31a" class="bulleted-list"><li style="list-style-type:disc">CashPoints are valid for 2 years before expiring</li></ul></div></div><h2 id="1c0870b8-f1b4-80ae-930b-e293cef0e405" class=""><strong>Milestone Benefits</strong></h2><ul id="1c0870b8-f1b4-8006-a5e0-d36644c4ab57" class="bulleted-list"><li style="list-style-type:disc"><strong>Quarterly Milestone</strong>: Spend ₹8 lakh/quarter to earn <strong>12,500 RP</strong> (redeemable for ₹4,375+ via SmartBuy).</li></ul><ul id="1c0870b8-f1b4-80c2-bd37-e05bdc586872" class="bulleted-list"><li style="list-style-type:disc"><strong>Annual Milestone</strong>: Spend ₹25 lakh/year to unlock <strong>1 complimentary Taj voucher</strong> worth ₹25,000.</li></ul><h2 id="1c0870b8-f1b4-80d4-9a21-e92f1e85a9ad" class=""><strong>Travel Benefits</strong></h2><ol type="1" id="1c0870b8-f1b4-808d-923c-ea9ae090ba29" class="numbered-list" start="1"><li><strong>Unlimited Lounge Access</strong>:<ul id="1c0870b8-f1b4-801e-b20c-ecaf6b11cc0f" class="bulleted-list"><li style="list-style-type:disc">Complimentary access to <strong>1,400+ domestic/international lounges</strong> via Priority Pass and DreamFolks.</li></ul><ul id="1c0870b8-f1b4-8081-b96f-e45232981bfd" class="bulleted-list"><li style="list-style-type:disc">Includes <strong>spa services</strong> at select airports.</li></ul></li></ol><ol type="1" id="1c0870b8-f1b4-80f7-ac50-ceb88a5c629b" class="numbered-list" start="2"><li><strong>Travel Insurance</strong>:<ul id="1c0870b8-f1b4-8074-8601-e82aee433648" class="bulleted-list"><li style="list-style-type:disc"><strong>₹50 lakh overseas medical coverage</strong>.</li></ul><ul id="1c0870b8-f1b4-8029-a2b8-f6031351cd08" class="bulleted-list"><li style="list-style-type:disc"><strong>₹3 crore air accident insurance</strong>.</li></ul><ul id="1c0870b8-f1b4-80b0-9356-c512601e4f8f" class="bulleted-list"><li style="list-style-type:disc"><strong>Lost baggage/delayed flight reimbursement</strong> up to ₹1 lakh.</li></ul></li></ol><ol type="1" id="1c0870b8-f1b4-8080-ac13-eea87babf305" class="numbered-list" start="3"><li><strong>Foreign Currency Markup</strong>: Only <strong>2%</strong> (lower than industry average).</li></ol><h2 id="1c0870b8-f1b4-805b-bbd8-eec60656fc9f" class=""><strong>Lifestyle &amp; Concierge Services</strong></h2><ul id="1c0870b8-f1b4-80fa-b6bd-e1c3544b8724" class="bulleted-list"><li style="list-style-type:disc"><strong>Dining</strong>:<ul id="1c0870b8-f1b4-8069-97b4-d25fdfa09e14" class="bulleted-list"><li style="list-style-type:circle"><strong>40% off</strong> at luxury restaurants via the <strong>Good Food Trail</strong> program.</li></ul><ul id="1c0870b8-f1b4-80d6-a50f-ec277d79441e" class="bulleted-list"><li style="list-style-type:circle"><strong>1+1 buffet</strong> at ITC Hotels every weekend.</li></ul></li></ul><ul id="1c0870b8-f1b4-80a0-861b-c6ede1b902c7" class="bulleted-list"><li style="list-style-type:disc"><strong>Golf</strong>: Unlimited complimentary rounds at premium courses (e.g., DLF Golf Club).</li></ul><ul id="1c0870b8-f1b4-80f5-b94e-ed0b34d3e691" class="bulleted-list"><li style="list-style-type:disc"><strong>Concierge</strong>: 24/7 personalized assistance for bookings, reservations, and gifting.</li></ul><h2 id="1c0870b8-f1b4-807d-83c5-f5a86aa7b310" class=""><strong>Eligibility Criteria</strong></h2><ul id="1c0870b8-f1b4-8099-9f8d-e2e3da578c2c" class="bulleted-list"><li style="list-style-type:disc"><strong>Salaried Individuals</strong>: Minimum monthly income of <strong>₹5 lakh</strong>.</li></ul><ul id="1c0870b8-f1b4-8081-a4b6-e0451e874488" class="bulleted-list"><li style="list-style-type:disc"><strong>Self-Employed</strong>: Annual ITR of <strong>₹60 lakh</strong>.</li></ul><ul id="1c0870b8-f1b4-8086-93be-e54e99f2bafc" class="bulleted-list"><li style="list-style-type:disc"><strong>Government Employees</strong>: Monthly income of <strong>₹3.5 lakh</strong>.</li></ul><ul id="1c0870b8-f1b4-80c1-b65f-fa1ab52856d6" class="bulleted-list"><li style="list-style-type:disc"><strong>Credit Score</strong>: 750+ (mandatory).</li></ul><h2 id="1c0870b8-f1b4-806b-9a9a-cfc8ec22360a" class=""><strong>Current Updates (March 2025)</strong></h2><ol type="1" id="1c0870b8-f1b4-8042-95e2-f01f8ca77404" class="numbered-list" start="1"><li><strong>Enhanced SmartBuy Benefits</strong>:<ul id="1c0870b8-f1b4-8021-a857-c512c4aab2b9" class="bulleted-list"><li style="list-style-type:disc"><strong>Airline/Hotel Redemptions</strong>: Redeem RP at <strong>1 RP = ₹1</strong> for bookings (up from ₹0.80 earlier).</li></ul><ul id="1c0870b8-f1b4-8016-9e1d-d51b8431c3ac" class="bulleted-list"><li style="list-style-type:disc"><strong>Exclusive Partner Offers</strong>: Extra discounts on Emirates, Marriott, and Oberoi stays.</li></ul></li></ol><ol type="1" id="1c0870b8-f1b4-80d6-b869-f0b244a2c4be" class="numbered-list" start="2"><li><strong>New Fee Waiver</strong>: Annual fee waived for spends exceeding <strong>₹15 lakh</strong> (previously ₹10 lakh).</li></ol><ol type="1" id="1c0870b8-f1b4-80c3-8ef9-dd59e11ca999" class="numbered-list" start="3"><li><strong>Fuel Surcharge</strong>: <strong>1% waiver</strong> on transactions between ₹400–₹5,000 (max ₹250/cycle).</li></ol><h2 id="1c0870b8-f1b4-80fb-a934-da98c7d5d050" class=""><strong>Comparison with Other Premium Cards</strong></h2><table id="1c0870b8-f1b4-807a-9cea-ca1be1f1aa8b" class="simple-table"><tbody><tr id="1c0870b8-f1b4-8039-82a2-d6194eacbbb1"><td id="wH;r" class="" style="width:401.0546875px">Feature</td><td id="e:Gn" class="" style="width:407px">HDFC Infinia</td><td id="RlcJ" class="" style="width:322px">Axis Magnus</td><td id="wwCD" class="" style="width:389px">Amex Platinum</td></tr><tr id="1c0870b8-f1b4-80bc-a4d2-d2a136450ff0"><td id="wH;r" class="" style="width:401.0546875px">Reward Rate</td><td id="e:Gn" class="" style="width:407px">Up to 3.3% on regular spends; 33% on SmartBuy hotel bookings</td><td id="RlcJ" class="" style="width:322px">Up to 14% on spends over ₹1.5L/month; 24% on Travel Edge bookings</td><td id="wwCD" class="" style="width:389px">Up to 2.5%</td></tr><tr id="1c0870b8-f1b4-80c5-8236-f0ad5d66a7d8"><td id="wH;r" class="" style="width:401.0546875px">Lounge Access</td><td id="e:Gn" class="" style="width:407px">Unlimited domestic and international for primary and add-on cardholders</td><td id="RlcJ" class="" style="width:322px">Unlimited international &amp; domestic with 4 additional guest visits</td><td id="wwCD" class="" style="width:389px">Unlimited domestic and international</td></tr><tr id="1c0870b8-f1b4-805b-9bbf-ec8cf7c63032"><td id="wH;r" class="" style="width:401.0546875px">Annual Fee</td><td id="e:Gn" class="" style="width:407px">₹12,500 + GST</td><td id="RlcJ" class="" style="width:322px">₹12,500 + GST</td><td id="wwCD" class="" style="width:389px">₹60,000 + GST</td></tr><tr id="1c0870b8-f1b4-8046-b46e-e89ad8583512"><td id="wH;r" class="" style="width:401.0546875px">Fee Waiver</td><td id="e:Gn" class="" style="width:407px">On annual spend of ₹8 lakh</td><td id="RlcJ" class="" style="width:322px">On annual spend of ₹30 lakh</td><td id="wwCD" class="" style="width:389px">Not available</td></tr><tr id="1c0870b8-f1b4-8072-971c-fb9e2ae07957"><td id="wH;r" class="" style="width:401.0546875px">Travel Insurance</td><td id="e:Gn" class="" style="width:407px">₹50 lakh medical insurance; ₹3 crore air accident cover</td><td id="RlcJ" class="" style="width:322px">₹25 lakh</td><td id="wwCD" class="" style="width:389px">₹1 crore</td></tr><tr id="1c0870b8-f1b4-80dd-9c82-d11a23f41707"><td id="wH;r" class="" style="width:401.0546875px">Forex Markup</td><td id="e:Gn" class="" style="width:407px">2%</td><td id="RlcJ" class="" style="width:322px">2%</td><td id="wwCD" class="" style="width:389px">3.5%</td></tr><tr id="1c0870b8-f1b4-809e-aa7c-e8a6651d2189"><td id="wH;r" class="" style="width:401.0546875px">Welcome Benefits</td><td id="e:Gn" class="" style="width:407px">12,500 bonus reward points</td><td id="RlcJ" class="" style="width:322px">₹5,000 Yatra voucher</td><td id="wwCD" class="" style="width:389px">Various luxury hotel and airline status upgrades</td></tr><tr id="1c0870b8-f1b4-8092-b5d7-cb9ffda524a7"><td id="wH;r" class="" style="width:401.0546875px">Reward Point Value</td><td id="e:Gn" class="" style="width:407px">1 RP = ₹1 for travel bookings on SmartBuy</td><td id="RlcJ" class="" style="width:322px">1 RP = ₹0.40 when transferred to airline/hotel partners</td><td id="wwCD" class="" style="width:389px">1 RP = ₹0.75 to ₹1 depending on redemption</td></tr><tr id="1c0870b8-f1b4-80ba-8791-e544c4027a98"><td id="wH;r" class="" style="width:401.0546875px">Milestone Benefits</td><td id="e:Gn" class="" style="width:407px">Taj voucher worth ₹25,000 on annual spend of ₹25 lakh</td><td id="RlcJ" class="" style="width:322px">None specified</td><td id="wwCD" class="" style="width:389px">None specified</td></tr><tr id="1c0870b8-f1b4-8082-8e07-eb9a80c31051"><td id="wH;r" class="" style="width:401.0546875px">Best For</td><td id="e:Gn" class="" style="width:407px">High spenders, frequent travelers</td><td id="RlcJ" class="" style="width:322px">Very high spenders (&gt;₹3L/month)</td><td id="wwCD" class="" style="width:389px">Luxury travel enthusiasts</td></tr></tbody></table><h2 id="1c0870b8-f1b4-8077-978d-e9fd153eb899" class=""><strong>Who Should Apply?</strong></h2><p id="1c0870b8-f1b4-8078-b851-e57ca201eb40" class="">The HDFC Infinia Credit Card is ideal for:</p><ol type="1" id="1c0870b8-f1b4-809f-8d12-d5ef085302bd" class="numbered-list" start="1"><li>High-net-worth individuals with significant spending power</li></ol><ol type="1" id="1c0870b8-f1b4-809e-bda7-f11c1ec2960e" class="numbered-list" start="2"><li>Frequent travelers who can benefit from unlimited lounge access and travel insurance</li></ol><ol type="1" id="1c0870b8-f1b4-80fb-95ff-d14b78e60c3d" class="numbered-list" start="3"><li>Luxury shoppers and dining enthusiasts</li></ol><ol type="1" id="1c0870b8-f1b4-8044-8b40-e03efe700f78" class="numbered-list" start="4"><li>Those seeking premium concierge services and exclusive lifestyle benefits</li></ol><h2 id="1c0870b8-f1b4-8087-912a-c8354337251a" class=""><strong>When Not to Apply</strong></h2><ul id="1c0870b8-f1b4-80fd-9a92-c1cb97b9fca5" class="bulleted-list"><li style="list-style-type:disc">If your annual spending is below ₹15 lakh, as the annual fees may outweigh the benefits</li></ul><ul id="1c0870b8-f1b4-8059-bc79-deb5a573bd12" class="bulleted-list"><li style="list-style-type:disc">If you rarely travel or don&#x27;t utilize premium dining and lifestyle perks</li></ul><ul id="1c0870b8-f1b4-8035-8b4e-d14e7440cecc" class="bulleted-list"><li style="list-style-type:disc">If you prefer straightforward cashback rewards over point-based systems</li></ul><h2 id="1c0870b8-f1b4-80cd-99bc-f8b66ebc79ec" class=""><strong>Tips to Maximize Benefits</strong></h2><ol type="1" id="1c0870b8-f1b4-802b-82fc-f60f8151bec7" class="numbered-list" start="1"><li>Utilize SmartBuy for travel bookings to earn 10X reward points</li></ol><ol type="1" id="1c0870b8-f1b4-80e1-9e37-d2fb82ff5a0f" class="numbered-list" start="2"><li>Take advantage of the complimentary golf games and Club Marriott membership</li></ol><ol type="1" id="1c0870b8-f1b4-809c-85e1-de8ddc831f83" class="numbered-list" start="3"><li>Use the card for international transactions to benefit from the low 2% forex markup</li></ol><ol type="1" id="1c0870b8-f1b4-8003-8f1b-d398253c2f7c" class="numbered-list" start="4"><li>Aim to meet the ₹10 lakh annual spend threshold to waive the annual fee</li></ol><p id="1c0870b8-f1b4-81f5-8357-ee93719ef8ee" class="">
+</p><hr id="1c0870b8-f1b4-8162-b1fb-de0530299606"/><h1 id="1c0870b8-f1b4-8168-8c99-ce72ac3ab638" class="block-color-default_background">FAQs:</h1><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0">Enter FAQ Question here</summary></details><figure class="block-color-default_background callout" style="white-space:pre-wrap;display:flex" id="1c0870b8-f1b4-814a-a38e-e3b1f96878bc"><div style="font-size:1.5em"><span class="icon">📹</span></div><div style="width:100%"><p id="1c0870b8-f1b4-81a9-a6de-e2fafaa07350" class="">Want to learn More check out out video below</p></div></figure><figure id="1c1870b8-f1b4-80c4-8cfd-df60ded3f5bd"><div class="source"><a href="https://youtu.be/FZLsurnBm2Q?si=VEbW3PGLXfnGjYgY">https://youtu.be/FZLsurnBm2Q?si=VEbW3PGLXfnGjYgY</a></div></figure><p id="1c0870b8-f1b4-8119-95ee-d917a443d9b8" class="">
+</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

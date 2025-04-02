@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
+import { UploadIcon } from "lucide-react";
 import { type Card as CreditCard, type Bank, type Category } from "@/lib/types";
 
 interface CardFormProps {
@@ -34,6 +35,8 @@ interface CardFormProps {
 
 export function CardForm({ card, onSuccess }: CardFormProps) {
   const [isPending, setIsPending] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   
   // Fetch banks for the dropdown
@@ -99,6 +102,62 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
       cardColorTo: "#0F4C81",
     },
   });
+
+  // Function to handle HTML file imports
+  const handleHtmlFileImport = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  // Handle file selection
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setIsImporting(true);
+    
+    try {
+      const text = await file.text();
+      
+      // Update the HTML content field
+      form.setValue('contentHtml', text);
+      
+      // Try to extract a title from the HTML content for the card name if it's empty
+      if (!form.getValues('name')) {
+        const titleMatch = text.match(/<title>(.*?)<\/title>/i);
+        if (titleMatch && titleMatch[1]) {
+          form.setValue('name', titleMatch[1]);
+          
+          // Generate a slug from the title
+          const slug = titleMatch[1]
+            .toLowerCase()
+            .replace(/[^\w\s-]/g, '')
+            .replace(/\s+/g, '-');
+          
+          form.setValue('slug', slug);
+        }
+      }
+      
+      toast({
+        title: "HTML imported",
+        description: "The HTML content has been imported successfully.",
+      });
+    } catch (error) {
+      console.error("Error importing HTML file:", error);
+      toast({
+        title: "Import Error",
+        description: "Failed to import the HTML file. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsImporting(false);
+      // Reset the file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsPending(true);
@@ -347,14 +406,37 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
           name="contentHtml"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>HTML Content</FormLabel>
+              <div className="flex justify-between items-center">
+                <FormLabel>HTML Content</FormLabel>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleHtmlFileImport}
+                  disabled={isImporting}
+                  className="flex items-center gap-1"
+                >
+                  <UploadIcon className="h-4 w-4" />
+                  {isImporting ? "Importing..." : "Import HTML"}
+                </Button>
+              </div>
               <FormControl>
                 <Textarea 
-                  placeholder="Enter HTML content for the card details page." 
+                  placeholder="Enter HTML content for the card details page or import from a file." 
                   className="min-h-[200px] font-mono text-sm"
                   {...field} 
                 />
               </FormControl>
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                accept=".html,.htm" 
+                onChange={handleFileChange} 
+                className="hidden"
+              />
+              <p className="text-sm text-gray-500 mt-1">
+                You can write HTML directly or import it from an HTML file using the Import button.
+              </p>
               <FormMessage />
             </FormItem>
           )}

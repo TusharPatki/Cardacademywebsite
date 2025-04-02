@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -23,7 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar } from "lucide-react";
+import { Calendar, UploadIcon } from "lucide-react";
 import { format } from "date-fns";
 import { type Article } from "@/lib/types";
 
@@ -34,6 +34,8 @@ interface ArticleFormProps {
 
 export function ArticleForm({ article, onSuccess }: ArticleFormProps) {
   const [isPending, setIsPending] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   
   // Form schema
@@ -76,6 +78,73 @@ export function ArticleForm({ article, onSuccess }: ArticleFormProps) {
       category: "News",
     },
   });
+
+  // Function to handle HTML file imports
+  const handleHtmlFileImport = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  // Handle file selection
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setIsImporting(true);
+    
+    try {
+      const text = await file.text();
+      
+      // Update the HTML content field
+      form.setValue('contentHtml', text);
+      
+      // Try to extract a title from the HTML content if it's empty
+      if (!form.getValues('title')) {
+        const titleMatch = text.match(/<title>(.*?)<\/title>/i);
+        if (titleMatch && titleMatch[1]) {
+          form.setValue('title', titleMatch[1]);
+          
+          // Generate a slug from the title
+          const slug = titleMatch[1]
+            .toLowerCase()
+            .replace(/[^\w\s-]/g, '')
+            .replace(/\s+/g, '-');
+          
+          form.setValue('slug', slug);
+          
+          // Try to extract a short excerpt from the content
+          // Look for the first paragraph or content
+          const contentMatch = text.match(/<p>(.*?)<\/p>/i);
+          if (contentMatch && contentMatch[1]) {
+            const excerpt = contentMatch[1]
+              .replace(/<[^>]*>/g, '') // Remove any HTML tags
+              .substring(0, 190); // Limit to 190 chars for the excerpt
+            
+            form.setValue('excerpt', excerpt);
+          }
+        }
+      }
+      
+      toast({
+        title: "HTML imported",
+        description: "The HTML content has been imported successfully.",
+      });
+    } catch (error) {
+      console.error("Error importing HTML file:", error);
+      toast({
+        title: "Import Error",
+        description: "Failed to import the HTML file. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsImporting(false);
+      // Reset the file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsPending(true);
@@ -261,14 +330,37 @@ export function ArticleForm({ article, onSuccess }: ArticleFormProps) {
           name="contentHtml"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>HTML Content</FormLabel>
+              <div className="flex justify-between items-center">
+                <FormLabel>HTML Content</FormLabel>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleHtmlFileImport}
+                  disabled={isImporting}
+                  className="flex items-center gap-1"
+                >
+                  <UploadIcon className="h-4 w-4" />
+                  {isImporting ? "Importing..." : "Import HTML"}
+                </Button>
+              </div>
               <FormControl>
                 <Textarea 
-                  placeholder="Enter HTML content for the article. This will override the regular content when displaying the article." 
+                  placeholder="Enter HTML content for the article or import from a file. This will override the regular content when displaying the article." 
                   className="min-h-[200px] font-mono text-sm"
                   {...field} 
                 />
               </FormControl>
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                accept=".html,.htm" 
+                onChange={handleFileChange} 
+                className="hidden"
+              />
+              <p className="text-sm text-gray-500 mt-1">
+                You can write HTML directly or import it from an HTML file using the Import button.
+              </p>
               <FormMessage />
             </FormItem>
           )}
