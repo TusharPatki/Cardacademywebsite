@@ -75,8 +75,8 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
     defaultValues: card ? {
       name: card.name || "",
       slug: card.slug || "",
-      bankId: card.bankId !== null && card.bankId !== undefined ? Number(card.bankId) : 0,
-      categoryId: card.categoryId !== null && card.categoryId !== undefined ? Number(card.categoryId) : 0,
+      bankId: card.bankId !== null && card.bankId !== undefined ? String(card.bankId) : "",
+      categoryId: card.categoryId !== null && card.categoryId !== undefined ? String(card.categoryId) : "",
       annualFee: card.annualFee || "$0",
       introApr: card.introApr || "",
       regularApr: card.regularApr || "",
@@ -92,8 +92,8 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
     } : {
       name: "",
       slug: "",
-      bankId: 0,
-      categoryId: 0,
+      bankId: "",
+      categoryId: "",
       annualFee: "$0",
       introApr: "",
       regularApr: "",
