@@ -33,7 +33,9 @@ export async function addEmailFieldToUsers() {
       const allUsers = await db.select().from(users);
       
       for (const user of allUsers) {
-        const email = `${user.username}@example.com`;
+        // For admin user, use a specific domain
+        const domain = user.username === 'admin' ? 'creditcardadvisor.com' : 'example.com';
+        const email = `${user.username}@${domain}`;
         await db
           .update(users)
           .set({ email })
