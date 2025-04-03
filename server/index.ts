@@ -2,6 +2,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { seedDatabase } from "./seed";
+import { addEmailFieldToUsers } from "./migrations/add-email-field";
 
 const app = express();
 app.use(express.json());
@@ -38,7 +39,20 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // Seed the database with initial data
+  // Run migrations first
+  try {
+    log("Running database migrations...");
+    const emailMigrationResult = await addEmailFieldToUsers();
+    if (emailMigrationResult.success) {
+      log("Email migration completed successfully");
+    } else {
+      log(`Email migration issue: ${emailMigrationResult.message}`);
+    }
+  } catch (error) {
+    log(`Error running migrations: ${error instanceof Error ? error.message : String(error)}`);
+  }
+  
+  // Then seed the database with initial data
   try {
     await seedDatabase();
     log("Database seeded successfully");
