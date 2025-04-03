@@ -275,7 +275,20 @@ export function ArticleForm({ article, onSuccess }: ArticleFormProps) {
             name="youtubeVideoId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>YouTube Video ID or URL</FormLabel>
+                <div className="flex justify-between items-center">
+                  <FormLabel>YouTube Video (optional)</FormLabel>
+                  {field.value && (
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => form.setValue("youtubeVideoId", "")}
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      Remove Video
+                    </Button>
+                  )}
+                </div>
                 <FormControl>
                   <Input 
                     placeholder="e.g. dQw4w9WgXcQ or https://www.youtube.com/watch?v=dQw4w9WgXcQ" 

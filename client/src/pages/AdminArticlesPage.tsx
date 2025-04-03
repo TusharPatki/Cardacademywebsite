@@ -219,6 +219,7 @@ export default function AdminArticlesPage({ mode }: AdminArticlesPageProps) {
                       <TableHead>Title</TableHead>
                       <TableHead>Category</TableHead>
                       <TableHead>Publish Date</TableHead>
+                      <TableHead>Video</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -238,6 +239,15 @@ export default function AdminArticlesPage({ mode }: AdminArticlesPageProps) {
                             <Calendar className="h-4 w-4 mr-2 text-gray-500" />
                             {format(new Date(article.publishDate), "MMM d, yyyy")}
                           </div>
+                        </TableCell>
+                        <TableCell>
+                          {article.youtubeVideoId ? (
+                            <Badge variant="secondary" className="bg-red-100 text-red-700">
+                              Has Video
+                            </Badge>
+                          ) : (
+                            <span className="text-gray-400 text-sm">None</span>
+                          )}
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end space-x-2">
