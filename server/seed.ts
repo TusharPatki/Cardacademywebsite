@@ -14,6 +14,7 @@ export async function seedDatabase() {
       log("Creating admin user...");
       await db.insert(users).values({
         username: "admin",
+        email: "admin@creditcardadvisor.com",
         password: "password123", // In a real app, this would be hashed
         isAdmin: true,
       });

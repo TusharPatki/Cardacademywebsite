@@ -7,6 +7,7 @@ import { relations } from "drizzle-orm";
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
+  email: text("email").notNull().unique(),
   password: text("password").notNull(),
   isAdmin: boolean("is_admin").default(false).notNull(),
 });
@@ -99,6 +100,7 @@ export const cardsRelations = relations(cards, ({ one }) => ({
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
+  email: true,
   password: true,
   isAdmin: true,
 });
@@ -175,7 +177,7 @@ export type InsertCalculator = z.infer<typeof insertCalculatorSchema>;
 
 // Auth schemas for login
 export const loginSchema = z.object({
-  username: z.string().min(3),
+  usernameOrEmail: z.string().min(3),
   password: z.string().min(6),
 });
 

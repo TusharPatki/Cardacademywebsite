@@ -32,7 +32,7 @@ export default function AdminLoginPage() {
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      username: "",
+      usernameOrEmail: "",
       password: "",
     },
   });
@@ -52,7 +52,7 @@ export default function AdminLoginPage() {
       console.error("Login error:", error);
       toast({
         title: "Login failed",
-        description: "Invalid username or password. Please try again.",
+        description: "Invalid login credentials. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -86,15 +86,15 @@ export default function AdminLoginPage() {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <FormField
                   control={form.control}
-                  name="username"
+                  name="usernameOrEmail"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Username</FormLabel>
+                      <FormLabel>Username or Email</FormLabel>
                       <FormControl>
                         <Input
                           type="text"
-                          placeholder="Enter your username"
-                          autoComplete="username"
+                          placeholder="Enter your username or email"
+                          autoComplete="username email"
                           {...field}
                         />
                       </FormControl>

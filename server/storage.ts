@@ -14,6 +14,8 @@ export interface IStorage {
   // Users
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
+  getUserByUsernameOrEmail(usernameOrEmail: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   
   // Categories
@@ -99,6 +101,7 @@ export class MemStorage implements IStorage {
     // Add default admin user
     this.createUser({
       username: "admin",
+      email: "admin@example.com", // Add default email
       password: "password123", // In a real app, this would be hashed
       isAdmin: true,
     });
@@ -268,6 +271,18 @@ export class MemStorage implements IStorage {
   async getUserByUsername(username: string): Promise<User | undefined> {
     return Array.from(this.users.values()).find(
       (user) => user.username === username,
+    );
+  }
+  
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    return Array.from(this.users.values()).find(
+      (user) => user.email === email,
+    );
+  }
+  
+  async getUserByUsernameOrEmail(usernameOrEmail: string): Promise<User | undefined> {
+    return Array.from(this.users.values()).find(
+      (user) => user.username === usernameOrEmail || user.email === usernameOrEmail,
     );
   }
 
@@ -491,6 +506,33 @@ export class DatabaseStorage implements IStorage {
   async getUserByUsername(username: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.username, username));
     return user || undefined;
+  }
+  
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user || undefined;
+  }
+  
+  async getUserByUsernameOrEmail(usernameOrEmail: string): Promise<User | undefined> {
+    // First try to find by username
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(
+        eq(users.username, usernameOrEmail)
+      );
+    
+    if (user) return user;
+    
+    // If not found, try by email
+    const [userByEmail] = await db
+      .select()
+      .from(users)
+      .where(
+        eq(users.email, usernameOrEmail)
+      );
+    
+    return userByEmail || undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
