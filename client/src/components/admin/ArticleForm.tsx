@@ -83,8 +83,8 @@ export function ArticleForm({ article, onSuccess }: ArticleFormProps) {
   const formSchema = z.object({
     title: z.string().min(5, "Title must be at least 5 characters."),
     slug: z.string().min(5, "Slug must be at least 5 characters.").regex(/^[a-z0-9-]+$/, "Slug must contain only lowercase letters, numbers, and hyphens."),
-    content: z.string().min(100, "Content must be at least 100 characters."),
-    contentHtml: z.string().optional(),
+    content: z.string().optional().or(z.literal("")),
+    contentHtml: z.string().optional().or(z.literal("")),
     excerpt: z.string().min(10, "Excerpt must be at least 10 characters.").max(200, "Excerpt must be at most 200 characters."),
     imageUrl: z.string().url("Must be a valid URL.").optional().or(z.literal("")),
     publishDate: z.string(),
@@ -191,6 +191,21 @@ export function ArticleForm({ article, onSuccess }: ArticleFormProps) {
     setIsPending(true);
     
     try {
+      // Make sure content field has a value (required by database schema)
+      // If contentHtml is available, use a summary, otherwise use placeholder
+      if (!values.content || values.content.trim() === "") {
+        if (values.contentHtml) {
+          // Create a simple text summary from HTML content
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = values.contentHtml;
+          const textContent = tempDiv.textContent || tempDiv.innerText;
+          values.content = textContent.substring(0, 500) + (textContent.length > 500 ? '...' : '');
+        } else {
+          // Fallback placeholder
+          values.content = "Content available in HTML format.";
+        }
+      }
+      
       if (article) {
         // Update existing article
         await apiRequest("PUT", `/api/articles/${article.id}`, values);
@@ -363,29 +378,11 @@ export function ArticleForm({ article, onSuccess }: ArticleFormProps) {
         
         <FormField
           control={form.control}
-          name="content"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Content</FormLabel>
-              <FormControl>
-                <Textarea 
-                  placeholder="Write the full article content." 
-                  className="min-h-[300px]"
-                  {...field} 
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <FormField
-          control={form.control}
           name="contentHtml"
           render={({ field }) => (
             <FormItem>
               <div className="flex justify-between items-center">
-                <FormLabel>HTML Content</FormLabel>
+                <FormLabel>Article Content (HTML)</FormLabel>
                 <Button 
                   type="button" 
                   variant="outline" 
@@ -400,8 +397,8 @@ export function ArticleForm({ article, onSuccess }: ArticleFormProps) {
               </div>
               <FormControl>
                 <Textarea 
-                  placeholder="Enter HTML content for the article or import from a file. This will override the regular content when displaying the article." 
-                  className="min-h-[200px] font-mono text-sm"
+                  placeholder="Enter HTML content for the article or import from a file." 
+                  className="min-h-[400px] font-mono text-sm"
                   {...field} 
                 />
               </FormControl>
@@ -419,6 +416,8 @@ export function ArticleForm({ article, onSuccess }: ArticleFormProps) {
             </FormItem>
           )}
         />
+        
+        <input type="hidden" {...form.register("content")} />
         
         {/* Article Preview */}
         <Card className="overflow-hidden">
