@@ -27,12 +27,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       resave: false,
       saveUninitialized: false,
       cookie: { 
-        secure: process.env.NODE_ENV === "production", 
-        maxAge: 86400000, // 24 hours instead of 1 hour
+        secure: false, // Set to false for local development
+        maxAge: 86400000, // 24 hours
         sameSite: 'lax',
         httpOnly: true,
         path: '/'
       },
+      name: 'creditCardAdvisor.sid', // Custom name for the session cookie
     })
   );
 
@@ -81,10 +82,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Clear the cookie with the same settings as when it was set
-      res.clearCookie("connect.sid", {
+      res.clearCookie("creditCardAdvisor.sid", {
         path: '/',
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: false,
         sameSite: 'lax'
       });
       

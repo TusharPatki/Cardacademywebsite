@@ -49,12 +49,21 @@ export default function AdminLoginPage() {
     setIsLoading(true);
     
     try {
+      console.log("Login attempt started");
       await login(values);
+      
+      console.log("Login successful, checking auth state:", user);
+      
       toast({
         title: "Login successful",
         description: "Welcome to the Credit Card Advisor admin panel.",
       });
-      navigate("/admin");
+      
+      // Slight delay to ensure state is properly updated
+      setTimeout(() => {
+        console.log("Navigating to admin panel, auth state:", user);
+        navigate("/admin");
+      }, 300);
     } catch (error) {
       console.error("Login error:", error);
       toast({

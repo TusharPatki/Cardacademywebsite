@@ -16,11 +16,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
   
   // Query current user
-  const { data: user, isInitialLoading } = useQuery<User | null>({
+  const { data: user = null, isInitialLoading } = useQuery<User | null>({
     queryKey: ['/api/auth/me'],
-    staleTime: 300000, // 5 minutes
-    refetchOnWindowFocus: false,
+    staleTime: 60000, // 1 minute
+    refetchOnWindowFocus: true,
+    refetchInterval: 300000, // 5 minutes
     retry: false,
+    refetchOnMount: true,
   });
   
   // Update loading state when initial query completes
@@ -33,9 +35,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Login function
   const login = async (data: LoginInput) => {
     try {
-      await apiRequest("POST", "/api/auth/login", data);
-      // Refetch user data after login
+      const response = await apiRequest("POST", "/api/auth/login", data);
+      // Ensure the response is processed
+      await response.json();
+      
+      // Refetch user data after login and wait for it to complete
       await queryClient.invalidateQueries({ queryKey: ['/api/auth/me'] });
+      
+      // Ensure the latest user data is fetched
+      await queryClient.refetchQueries({ queryKey: ['/api/auth/me'] });
     } catch (error) {
       throw error;
     }

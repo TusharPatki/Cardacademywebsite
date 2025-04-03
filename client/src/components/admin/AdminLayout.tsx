@@ -33,10 +33,18 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   // Get authentication state
   const { user, isLoading } = useAuth();
   
-  // Redirect to login if not authenticated
+  // Handle authentication status
   useEffect(() => {
-    if (!isLoading && !user) {
-      navigate("/admin/login");
+    console.log("AdminLayout auth state:", { user, isLoading });
+    
+    // Only redirect if we've finished loading and no user is found
+    if (!isLoading) {
+      if (!user) {
+        console.log("Not authenticated, redirecting to login");
+        navigate("/admin/login");
+      } else {
+        console.log("Authenticated as:", user);
+      }
     }
   }, [user, isLoading, navigate]);
   
