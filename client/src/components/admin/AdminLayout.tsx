@@ -10,11 +10,13 @@ import {
   Menu,
   X,
   ListChecks,
+  Loader2,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -26,23 +28,34 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const { toast } = useToast();
   
   const [, params] = useRoute("/admin/:path*");
-  const currentPath = params?.path || "";
+  const currentPath = params?.["path*"] || "";
   
-  // Check if user is logged in
-  const checkAuth = async () => {
-    try {
-      await queryClient.fetchQuery({
-        queryKey: ['/api/auth/me'],
-        staleTime: Infinity,
-      });
-    } catch (error) {
+  // Get authentication state
+  const { user, isLoading } = useAuth();
+  
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isLoading && !user) {
       navigate("/admin/login");
     }
-  };
+  }, [user, isLoading, navigate]);
   
-  useEffect(() => {
-    checkAuth();
-  }, []);
+  // Show loading state while checking auth
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center">
+          <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
+          <p className="text-gray-500">Loading admin panel...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // If not logged in, don't render anything (will redirect)
+  if (!user) {
+    return null;
+  }
   
   const handleLogout = async () => {
     try {

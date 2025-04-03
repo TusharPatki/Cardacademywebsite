@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -24,9 +24,16 @@ import { loginSchema } from "@shared/schema";
 
 export default function AdminLoginPage() {
   const [, navigate] = useLocation();
-  const { login } = useAuth();
+  const { login, user, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Redirect if already logged in
+  useEffect(() => {
+    if (!authLoading && user) {
+      navigate("/admin");
+    }
+  }, [user, authLoading, navigate]);
   
   // Form setup
   const form = useForm<z.infer<typeof loginSchema>>({

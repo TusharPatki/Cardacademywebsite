@@ -20,13 +20,19 @@ declare module "express-session" {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Configure session middleware
+  // Configure session middleware with improved settings
   app.use(
     session({
       secret: process.env.SESSION_SECRET || "cardsavvy-secret",
       resave: false,
       saveUninitialized: false,
-      cookie: { secure: process.env.NODE_ENV === "production", maxAge: 3600000 }, // 1 hour
+      cookie: { 
+        secure: process.env.NODE_ENV === "production", 
+        maxAge: 86400000, // 24 hours instead of 1 hour
+        sameSite: 'lax',
+        httpOnly: true,
+        path: '/'
+      },
     })
   );
 
@@ -73,7 +79,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (err) {
         return res.status(500).json({ message: "Failed to logout" });
       }
-      res.clearCookie("connect.sid");
+      
+      // Clear the cookie with the same settings as when it was set
+      res.clearCookie("connect.sid", {
+        path: '/',
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: 'lax'
+      });
+      
       return res.status(200).json({ message: "Logged out successfully" });
     });
   });

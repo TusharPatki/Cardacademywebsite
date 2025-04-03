@@ -46,12 +46,18 @@ export const queryClient = new QueryClient({
     queries: {
       queryFn: getQueryFn({ on401: "throw" }),
       refetchInterval: false,
-      refetchOnWindowFocus: false,
-      staleTime: Infinity,
-      retry: false,
+      refetchOnWindowFocus: process.env.NODE_ENV === "production",
+      staleTime: 60000, // 1 minute instead of Infinity
+      retry: (failureCount, error: any) => {
+        // Don't retry auth errors, but retry other errors up to 3 times
+        return error?.message?.includes('401') ? false : failureCount < 3;
+      },
     },
     mutations: {
-      retry: false,
+      retry: (failureCount, error: any) => {
+        // Don't retry auth errors, but retry other errors up to 2 times
+        return error?.message?.includes('401') ? false : failureCount < 2;
+      },
     },
   },
 });
