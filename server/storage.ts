@@ -7,10 +7,19 @@ import {
   type Article, type InsertArticle,
   type Calculator, type InsertCalculator
 } from "@shared/schema";
-import { db } from "./db";
+import { db, pool } from "./db";
 import { eq, asc, desc, and } from "drizzle-orm";
+import session from "express-session";
+import createMemoryStore from "memorystore";
+import connectPg from "connect-pg-simple";
+
+// Create session stores
+const MemoryStore = createMemoryStore(session);
+const PostgresSessionStore = connectPg(session);
 
 export interface IStorage {
+  // Session storage
+  sessionStore: session.Store;
   // Users
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
@@ -64,6 +73,7 @@ export interface IStorage {
 }
 
 export class MemStorage implements IStorage {
+  public sessionStore: session.Store;
   private users: Map<number, User>;
   private categories: Map<number, Category>;
   private banks: Map<number, Bank>;
@@ -79,6 +89,11 @@ export class MemStorage implements IStorage {
   private calculatorCurrentId: number;
 
   constructor() {
+    // Initialize the memory session store
+    this.sessionStore = new MemoryStore({
+      checkPeriod: 86400000, // prune expired entries every 24h
+    });
+    
     this.users = new Map();
     this.categories = new Map();
     this.banks = new Map();
@@ -97,9 +112,9 @@ export class MemStorage implements IStorage {
     this.initializeData();
   }
 
-  private initializeData(): void {
+  private async initializeData(): Promise<void> {
     // Add default admin user
-    this.createUser({
+    const adminUser = await this.createUser({
       username: "admin",
       email: "admin@example.com", // Add default email
       password: "password123", // In a real app, this would be hashed
@@ -107,61 +122,62 @@ export class MemStorage implements IStorage {
     });
 
     // Add default categories
-    const categoryIds = {
-      cashback: this.createCategory({ name: "Cashback Cards", slug: "cashback-cards" }).id,
-      rewards: this.createCategory({ name: "Rewards Cards", slug: "rewards-cards" }).id,
-      travel: this.createCategory({ name: "Travel Cards", slug: "travel-cards" }).id,
-      fuel: this.createCategory({ name: "Fuel Cards", slug: "fuel-cards" }).id,
-      balance: this.createCategory({ name: "Balance Transfer", slug: "balance-transfer" }).id,
-      business: this.createCategory({ name: "Business Cards", slug: "business-cards" }).id,
-    };
+    const cashbackCat = await this.createCategory({ name: "Cashback Cards", slug: "cashback-cards" });
+    const rewardsCat = await this.createCategory({ name: "Rewards Cards", slug: "rewards-cards" });
+    const travelCat = await this.createCategory({ name: "Travel Cards", slug: "travel-cards" });
+    const fuelCat = await this.createCategory({ name: "Fuel Cards", slug: "fuel-cards" });
+    const balanceCat = await this.createCategory({ name: "Balance Transfer", slug: "balance-transfer" });
+    const businessCat = await this.createCategory({ name: "Business Cards", slug: "business-cards" });
 
     // Add default banks
-    const bankIds = {
-      chase: this.createBank({ 
-        name: "Chase", 
-        slug: "chase",
-        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Chase_logo.svg/200px-Chase_logo.svg.png",
-        description: "Chase offers a wide range of credit cards with great rewards and benefits."
-      }).id,
-      citi: this.createBank({ 
-        name: "Citi", 
-        slug: "citi",
-        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Citibank_logo.svg/200px-Citibank_logo.svg.png",
-        description: "Citi offers a variety of credit cards with competitive rewards and perks."
-      }).id,
-      amex: this.createBank({ 
-        name: "American Express", 
-        slug: "american-express",
-        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/American_Express_logo_%282018%29.svg/200px-American_Express_logo_%282018%29.svg.png",
-        description: "American Express provides premium credit cards with exclusive benefits and rewards."
-      }).id,
-      capital: this.createBank({ 
-        name: "Capital One", 
-        slug: "capital-one",
-        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Capital_One_logo.svg/200px-Capital_One_logo.svg.png",
-        description: "Capital One offers innovative credit cards with great rewards and no annual fees."
-      }).id,
-      discover: this.createBank({ 
-        name: "Discover", 
-        slug: "discover",
-        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Discover_Card_logo.svg/200px-Discover_Card_logo.svg.png",
-        description: "Discover provides credit cards with cashback rewards and no annual fees."
-      }).id,
-      boa: this.createBank({ 
-        name: "Bank of America", 
-        slug: "bank-of-america",
-        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Bank_of_America_logo.svg/200px-Bank_of_America_logo.svg.png",
-        description: "Bank of America offers a variety of credit cards with competitive rewards."
-      }).id,
-    };
+    const chaseBank = await this.createBank({ 
+      name: "Chase", 
+      slug: "chase",
+      logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Chase_logo.svg/200px-Chase_logo.svg.png",
+      description: "Chase offers a wide range of credit cards with great rewards and benefits."
+    });
+    
+    const citiBank = await this.createBank({ 
+      name: "Citi", 
+      slug: "citi",
+      logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Citibank_logo.svg/200px-Citibank_logo.svg.png",
+      description: "Citi offers a variety of credit cards with competitive rewards and perks."
+    });
+    
+    const amexBank = await this.createBank({ 
+      name: "American Express", 
+      slug: "american-express",
+      logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/American_Express_logo_%282018%29.svg/200px-American_Express_logo_%282018%29.svg.png",
+      description: "American Express provides premium credit cards with exclusive benefits and rewards."
+    });
+    
+    const capitalBank = await this.createBank({ 
+      name: "Capital One", 
+      slug: "capital-one",
+      logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Capital_One_logo.svg/200px-Capital_One_logo.svg.png",
+      description: "Capital One offers innovative credit cards with great rewards and no annual fees."
+    });
+    
+    const discoverBank = await this.createBank({ 
+      name: "Discover", 
+      slug: "discover",
+      logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Discover_Card_logo.svg/200px-Discover_Card_logo.svg.png",
+      description: "Discover provides credit cards with cashback rewards and no annual fees."
+    });
+    
+    const boaBank = await this.createBank({ 
+      name: "Bank of America", 
+      slug: "bank-of-america",
+      logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Bank_of_America_logo.svg/200px-Bank_of_America_logo.svg.png",
+      description: "Bank of America offers a variety of credit cards with competitive rewards."
+    });
 
     // Add sample cards
-    this.createCard({
+    await this.createCard({
       name: "Citi® Double Cash Card",
       slug: "citi-double-cash-card",
-      bankId: bankIds.citi,
-      categoryId: categoryIds.cashback,
+      bankId: citiBank.id,
+      categoryId: cashbackCat.id,
       annualFee: "$0",
       introApr: "0% for 18 months",
       regularApr: "14.74% - 24.74%",
@@ -169,14 +185,19 @@ export class MemStorage implements IStorage {
       rating: "4.8",
       featured: true,
       cardColorFrom: "#0066B3",
-      cardColorTo: "#0058A0"
+      cardColorTo: "#0058A0",
+      content: "",
+      imageUrl: null,
+      applyLink: null,
+      creditScore: null,
+      publishDate: new Date()
     });
 
-    this.createCard({
+    await this.createCard({
       name: "Chase Freedom Unlimited®",
       slug: "chase-freedom-unlimited",
-      bankId: bankIds.chase,
-      categoryId: categoryIds.cashback,
+      bankId: chaseBank.id,
+      categoryId: cashbackCat.id,
       annualFee: "$0",
       introApr: "0% for 15 months",
       regularApr: "15.24% - 23.99%",
@@ -184,14 +205,19 @@ export class MemStorage implements IStorage {
       rating: "4.7",
       featured: true,
       cardColorFrom: "#7B2CBF",
-      cardColorTo: "#5A189A"
+      cardColorTo: "#5A189A",
+      content: "",
+      imageUrl: null,
+      applyLink: null,
+      creditScore: null,
+      publishDate: new Date()
     });
 
-    this.createCard({
+    await this.createCard({
       name: "Discover it® Cash Back",
       slug: "discover-it-cash-back",
-      bankId: bankIds.discover,
-      categoryId: categoryIds.cashback,
+      bankId: discoverBank.id,
+      categoryId: cashbackCat.id,
       annualFee: "$0",
       introApr: "0% for 14 months",
       regularApr: "13.49% - 24.49%",
@@ -199,63 +225,74 @@ export class MemStorage implements IStorage {
       rating: "4.6",
       featured: true,
       cardColorFrom: "#0B8457",
-      cardColorTo: "#096C46"
+      cardColorTo: "#096C46",
+      content: "",
+      imageUrl: null,
+      applyLink: null,
+      creditScore: null,
+      publishDate: new Date()
     });
 
     // Add sample articles
-    this.createArticle({
+    await this.createArticle({
       title: "Top Credit Card Reward Programs for Summer Travel",
       slug: "top-credit-card-reward-programs-summer-travel",
       content: "Detailed content about the best credit cards for summer travel...",
       excerpt: "Maximize your summer vacation with these top travel credit cards offering enhanced rewards and perks for the season.",
       imageUrl: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e",
       publishDate: new Date("2023-06-15"),
-      category: "News"
+      category: "News",
+      contentHtml: null,
+      youtubeVideoId: null
     });
 
-    this.createArticle({
+    await this.createArticle({
       title: "Limited Time: Citi Double Cash Offering $200 Welcome Bonus",
       slug: "citi-double-cash-welcome-bonus",
       content: "Detailed information about the Citi Double Cash Card welcome bonus...",
       excerpt: "Citi has launched a special promotion for new cardholders with an increased welcome bonus and additional benefits.",
       imageUrl: "https://images.unsplash.com/photo-1563013544-824ae1b704d3",
       publishDate: new Date("2023-06-10"),
-      category: "Offers"
+      category: "Offers",
+      contentHtml: null,
+      youtubeVideoId: null
     });
 
-    this.createArticle({
+    await this.createArticle({
       title: "How to Improve Your Credit Score in 2023",
       slug: "improve-credit-score-2023",
       content: "Detailed guide on improving your credit score...",
       excerpt: "Expert tips on improving your credit score quickly and effectively to qualify for better credit card offers and rates.",
       imageUrl: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85",
       publishDate: new Date("2023-06-05"),
-      category: "Guides"
+      category: "Guides",
+      contentHtml: null,
+      youtubeVideoId: null
     });
 
     // Add default calculators
-    this.createCalculator({
+    await this.createCalculator({
       name: "Credit Card Payoff Calculator",
       slug: "credit-card-payoff",
       description: "Calculate how long it will take to pay off your credit card balance.",
       iconName: "credit-card"
     });
 
-    this.createCalculator({
+    await this.createCalculator({
       name: "APR Calculator",
       slug: "apr-calculator",
       description: "Understand the true cost of credit with our APR calculator.",
       iconName: "percentage"
     });
 
-    this.createCalculator({
+    await this.createCalculator({
       name: "Rewards Value Calculator",
       slug: "rewards-value",
       description: "Determine the real value of your credit card rewards and points.",
       iconName: "coins"
     });
 
-    this.createCalculator({
+    await this.createCalculator({
       name: "Balance Transfer Calculator",
       slug: "balance-transfer",
       description: "Compare balance transfer offers and calculate potential savings.",
@@ -288,7 +325,11 @@ export class MemStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.userCurrentId++;
-    const user: User = { ...insertUser, id };
+    const user: User = { 
+      ...insertUser, 
+      id,
+      isAdmin: insertUser.isAdmin || false // Ensure isAdmin is always set
+    };
     this.users.set(id, user);
     return user;
   }
@@ -345,7 +386,12 @@ export class MemStorage implements IStorage {
 
   async createBank(insertBank: InsertBank): Promise<Bank> {
     const id = this.bankCurrentId++;
-    const bank: Bank = { ...insertBank, id };
+    const bank: Bank = { 
+      ...insertBank, 
+      id,
+      logoUrl: insertBank.logoUrl || null,
+      description: insertBank.description || null
+    };
     this.banks.set(id, bank);
     return bank;
   }
@@ -398,7 +444,22 @@ export class MemStorage implements IStorage {
 
   async createCard(insertCard: InsertCard): Promise<Card> {
     const id = this.cardCurrentId++;
-    const card: Card = { ...insertCard, id };
+    const card: Card = { 
+      ...insertCard, 
+      id,
+      // Ensure all nullable fields have appropriate defaults
+      introApr: insertCard.introApr || null,
+      regularApr: insertCard.regularApr || null,
+      rewardsDescription: insertCard.rewardsDescription || null,
+      rating: insertCard.rating || null,
+      applyLink: insertCard.applyLink || null,
+      content: insertCard.content || "",
+      imageUrl: insertCard.imageUrl || null,
+      creditScore: insertCard.creditScore || null,
+      cardColorFrom: insertCard.cardColorFrom || null,
+      cardColorTo: insertCard.cardColorTo || null,
+      publishDate: insertCard.publishDate || new Date()
+    };
     this.cards.set(id, card);
     return card;
   }
@@ -441,7 +502,20 @@ export class MemStorage implements IStorage {
 
   async createArticle(insertArticle: InsertArticle): Promise<Article> {
     const id = this.articleCurrentId++;
-    const article: Article = { ...insertArticle, id };
+    // Ensure all non-required fields have appropriate defaults and publishDate is a Date
+    const pubDate = typeof insertArticle.publishDate === 'string' 
+      ? new Date(insertArticle.publishDate) 
+      : insertArticle.publishDate;
+      
+    const article: Article = { 
+      ...insertArticle, 
+      id,
+      publishDate: pubDate,
+      contentHtml: insertArticle.contentHtml || null,
+      youtubeVideoId: insertArticle.youtubeVideoId || null,
+      imageUrl: insertArticle.imageUrl || null,
+      excerpt: insertArticle.excerpt || null
+    };
     this.articles.set(id, article);
     return article;
   }
@@ -449,6 +523,11 @@ export class MemStorage implements IStorage {
   async updateArticle(id: number, updateData: Partial<InsertArticle>): Promise<Article | undefined> {
     const article = this.articles.get(id);
     if (!article) return undefined;
+    
+    // Convert string date to Date object if needed
+    if (updateData.publishDate && typeof updateData.publishDate === 'string') {
+      updateData.publishDate = new Date(updateData.publishDate);
+    }
     
     const updatedArticle: Article = { ...article, ...updateData };
     this.articles.set(id, updatedArticle);
@@ -497,6 +576,16 @@ export class MemStorage implements IStorage {
 
 // Database-backed storage implementation
 export class DatabaseStorage implements IStorage {
+  public sessionStore: session.Store;
+
+  constructor() {
+    // Initialize the PostgreSQL session store with the pool from db.ts
+    this.sessionStore = new PostgresSessionStore({
+      pool: pool, 
+      createTableIfMissing: true
+    });
+  }
+  
   // User methods
   async getUser(id: number): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
@@ -636,11 +725,27 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createCard(insertCard: InsertCard): Promise<Card> {
+    // Ensure date field is a Date object before inserting
+    if (insertCard.publishDate && typeof insertCard.publishDate === 'string') {
+      insertCard = {
+        ...insertCard,
+        publishDate: new Date(insertCard.publishDate)
+      };
+    }
+    
     const [card] = await db.insert(cards).values(insertCard).returning();
     return card;
   }
 
   async updateCard(id: number, updateData: Partial<InsertCard>): Promise<Card | undefined> {
+    // Ensure date field is a Date object before updating
+    if (updateData.publishDate && typeof updateData.publishDate === 'string') {
+      updateData = {
+        ...updateData,
+        publishDate: new Date(updateData.publishDate)
+      };
+    }
+    
     const [card] = await db
       .update(cards)
       .set(updateData)
@@ -678,11 +783,27 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createArticle(insertArticle: InsertArticle): Promise<Article> {
+    // Ensure date field is a Date object before inserting
+    if (insertArticle.publishDate && typeof insertArticle.publishDate === 'string') {
+      insertArticle = {
+        ...insertArticle,
+        publishDate: new Date(insertArticle.publishDate)
+      };
+    }
+    
     const [article] = await db.insert(articles).values(insertArticle).returning();
     return article;
   }
 
   async updateArticle(id: number, updateData: Partial<InsertArticle>): Promise<Article | undefined> {
+    // Ensure date field is a Date object before updating
+    if (updateData.publishDate && typeof updateData.publishDate === 'string') {
+      updateData = {
+        ...updateData,
+        publishDate: new Date(updateData.publishDate)
+      };
+    }
+    
     const [article] = await db
       .update(articles)
       .set(updateData)

@@ -208,14 +208,56 @@ export function ArticleForm({ article, onSuccess }: ArticleFormProps) {
       
       if (article) {
         // Update existing article
-        await apiRequest("PUT", `/api/articles/${article.id}`, values);
+        const response = await apiRequest("PUT", `/api/articles/${article.id}`, values);
+        const data = await response.json();
+        
+        if (!response.ok) {
+          if (data.errors) {
+            // Extract and display validation errors
+            console.error("Validation errors:", data.errors);
+            const errorMessage = data.errors.map((err: any) => 
+              `${err.path.join('.')}: ${err.message}`
+            ).join('\n');
+            
+            toast({
+              title: "Validation Error",
+              description: errorMessage,
+              variant: "destructive",
+            });
+            return;
+          } else {
+            throw new Error(data.message || "Failed to update article");
+          }
+        }
+        
         toast({
           title: "Article updated",
           description: "The article has been updated successfully.",
         });
       } else {
         // Create new article
-        await apiRequest("POST", "/api/articles", values);
+        const response = await apiRequest("POST", "/api/articles", values);
+        const data = await response.json();
+        
+        if (!response.ok) {
+          if (data.errors) {
+            // Extract and display validation errors
+            console.error("Validation errors:", data.errors);
+            const errorMessage = data.errors.map((err: any) => 
+              `${err.path.join('.')}: ${err.message}`
+            ).join('\n');
+            
+            toast({
+              title: "Validation Error",
+              description: errorMessage,
+              variant: "destructive",
+            });
+            return;
+          } else {
+            throw new Error(data.message || "Failed to create article");
+          }
+        }
+        
         toast({
           title: "Article created",
           description: "The article has been created successfully.",
@@ -229,7 +271,7 @@ export function ArticleForm({ article, onSuccess }: ArticleFormProps) {
       console.error("Error saving article:", error);
       toast({
         title: "Error",
-        description: "Failed to save the article. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to save the article. Please try again.",
         variant: "destructive",
       });
     } finally {

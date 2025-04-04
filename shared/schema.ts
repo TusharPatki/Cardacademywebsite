@@ -137,17 +137,31 @@ export const insertCardSchema = createInsertSchema(cards).pick({
   publishDate: true,
 });
 
-export const insertArticleSchema = createInsertSchema(articles).pick({
-  title: true,
-  slug: true,
-  content: true,
-  contentHtml: true,
-  excerpt: true,
-  imageUrl: true,
-  publishDate: true,
-  category: true,
-  youtubeVideoId: true,
-});
+export const insertArticleSchema = createInsertSchema(articles)
+  .pick({
+    title: true,
+    slug: true,
+    content: true,
+    contentHtml: true,
+    excerpt: true,
+    imageUrl: true,
+    publishDate: true,
+    category: true,
+    youtubeVideoId: true,
+  })
+  .extend({
+    // Additional validation with better error messages
+    title: z.string().min(3, "Title must be at least 3 characters"),
+    slug: z.string().min(3, "Slug must be at least 3 characters").regex(/^[a-z0-9-]+$/, "Slug can only contain lowercase letters, numbers, and hyphens"),
+    content: z.string().min(1, "Content is required"),
+    publishDate: z.string().or(z.date(), "Publish date must be a valid date"),
+    category: z.string().min(1, "Category is required"),
+    // Make these optional with explicit empty string handling
+    contentHtml: z.string().optional().nullable(),
+    excerpt: z.string().optional().nullable(),
+    imageUrl: z.string().optional().nullable(),
+    youtubeVideoId: z.string().optional().nullable(),
+  });
 
 export const insertCalculatorSchema = createInsertSchema(calculators).pick({
   name: true,

@@ -20,9 +20,10 @@ declare module "express-session" {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Configure session middleware with improved settings
+  // Configure session middleware with improved settings and persistent storage
   app.use(
     session({
+      store: storage.sessionStore, // Use the storage-provided session store
       secret: process.env.SESSION_SECRET || "cardsavvy-secret",
       resave: false,
       saveUninitialized: false,
@@ -433,7 +434,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const result = insertArticleSchema.safeParse(req.body);
       if (!result.success) {
-        return res.status(400).json({ message: "Invalid input" });
+        console.error("Article validation errors:", result.error.errors);
+        return res.status(400).json({ 
+          message: "Invalid input", 
+          errors: result.error.errors 
+        });
       }
 
       const article = await storage.createArticle(result.data);
@@ -450,7 +455,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const result = insertArticleSchema.partial().safeParse(req.body);
       
       if (!result.success) {
-        return res.status(400).json({ message: "Invalid input" });
+        console.error("Article update validation errors:", result.error.errors);
+        return res.status(400).json({ 
+          message: "Invalid input", 
+          errors: result.error.errors 
+        });
       }
 
       const updatedArticle = await storage.updateArticle(id, result.data);
