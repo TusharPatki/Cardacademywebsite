@@ -10,6 +10,9 @@ import {
   insertCalculatorSchema 
 } from "@shared/schema";
 import session from "express-session";
+import path from "path";
+import fs from "fs";
+import { eq } from "drizzle-orm";
 
 // Extend Express session with our custom properties
 declare module "express-session" {
@@ -335,9 +338,82 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/cards", requireAuth, async (req, res) => {
     try {
+      // Log the incoming request body for debugging
+      console.log("Received card data:", JSON.stringify(req.body, null, 2));
+
+      // Validate required fields
+      const requiredFields = {
+        name: "Card name is required",
+        slug: "Slug is required",
+        bankId: "Bank is required",
+        categoryId: "Category is required",
+        annualFee: "Annual fee is required",
+        regularApr: "Regular APR is required",
+        rewardsDescription: "Rewards description is required"
+      };
+
+      // Log each field's value and type
+      console.log("Field values and types:");
+      Object.keys(requiredFields).forEach(field => {
+        console.log(`${field}:`, {
+          value: req.body[field],
+          type: typeof req.body[field],
+          exists: field in req.body
+        });
+      });
+
+      const missingFields = Object.entries(requiredFields)
+        .filter(([field]) => !req.body[field])
+        .map(([_, message]) => ({ field: _, message }));
+
+      if (missingFields.length > 0) {
+        console.log("Missing fields:", missingFields);
+        return res.status(400).json({ 
+          message: "Missing required fields",
+          errors: missingFields
+        });
+      }
+
+      // Validate field types
+      const typeErrors = [];
+      
+      if (typeof req.body.bankId !== 'number') {
+        typeErrors.push({ field: 'bankId', message: 'Bank ID must be a number' });
+      }
+      
+      if (typeof req.body.categoryId !== 'number') {
+        typeErrors.push({ field: 'categoryId', message: 'Category ID must be a number' });
+      }
+      
+      if (typeErrors.length > 0) {
+        console.log("Type errors:", typeErrors);
+        return res.status(400).json({ 
+          message: "Invalid field types",
+          errors: typeErrors
+        });
+      }
+
+      // Validate slug format
+      if (!/^[a-z0-9-]+$/.test(req.body.slug)) {
+        console.log("Invalid slug format:", req.body.slug);
+        return res.status(400).json({
+          message: "Invalid slug format",
+          errors: [{ field: 'slug', message: 'Slug must contain only lowercase letters, numbers, and hyphens' }]
+        });
+      }
+
       const result = insertCardSchema.safeParse(req.body);
       if (!result.success) {
-        return res.status(400).json({ message: "Invalid input" });
+        console.error("Card validation errors:", result.error.errors);
+        return res.status(400).json({ 
+          message: "Invalid input",
+          errors: result.error.errors.map(err => ({
+            field: err.path.join('.'),
+            message: err.message,
+            received: err.received,
+            expected: err.expected
+          }))
+        });
       }
 
       const card = await storage.createCard(result.data);
@@ -383,6 +459,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Delete card error:", error);
       return res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  // Image upload route for credit cards
+  app.post("/api/cards/:id/image", requireAuth, async (req, res) => {
+    try {
+      const cardId = parseInt(req.params.id);
+      if (!req.files || !req.files.image) {
+        return res.status(400).json({ message: "No image file uploaded" });
+      }
+
+      const imageFile = req.files.image;
+      const uploadDir = path.join(__dirname, '../public/uploads/cards');
+      
+      // Create uploads directory if it doesn't exist
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+
+      const fileName = `${cardId}-${Date.now()}${path.extname(imageFile.name)}`;
+      const filePath = path.join(uploadDir, fileName);
+
+      await imageFile.mv(filePath);
+
+      // Update the card with the new image URL
+      const imageUrl = `/uploads/cards/${fileName}`;
+      await storage.updateCard(cardId, { imageUrl });
+
+      res.json({ imageUrl });
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      res.status(500).json({ message: "Error uploading image" });
     }
   });
 

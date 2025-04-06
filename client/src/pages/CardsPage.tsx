@@ -158,9 +158,9 @@ export default function CardsPage() {
                     <SelectContent>
                       <SelectItem value="all">All Fees</SelectItem>
                       <SelectItem value="no-fee">No Annual Fee</SelectItem>
-                      <SelectItem value="under-100">Under $100</SelectItem>
-                      <SelectItem value="100-300">$100 - $300</SelectItem>
-                      <SelectItem value="300-plus">$300+</SelectItem>
+                      <SelectItem value="under-100">Under ₹5000</SelectItem>
+                      <SelectItem value="100-300">₹5000 - ₹15000</SelectItem>
+                      <SelectItem value="300-plus">₹15000+</SelectItem>
                     </SelectContent>
                   </Select>
                 

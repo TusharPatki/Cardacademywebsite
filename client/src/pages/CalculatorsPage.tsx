@@ -148,7 +148,7 @@ export default function CalculatorsPage() {
                         <div className="space-y-2">
                           <label className="text-sm font-medium">Current Balance</label>
                           <div className="flex items-center">
-                            <span className="text-gray-500 mr-2">$</span>
+                            <span className="text-gray-500 mr-2">₹</span>
                             <Input
                               type="number"
                               value={balance}
@@ -174,7 +174,7 @@ export default function CalculatorsPage() {
                         <div className="space-y-2">
                           <label className="text-sm font-medium">Monthly Payment</label>
                           <div className="flex items-center">
-                            <span className="text-gray-500 mr-2">$</span>
+                            <span className="text-gray-500 mr-2">₹</span>
                             <Input
                               type="number"
                               value={payment}

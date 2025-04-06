@@ -1,9 +1,11 @@
+import 'dotenv/config';
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { seedDatabase } from "./seed";
 import { addEmailFieldToUsers } from "./migrations/add-email-field";
 import cors from "cors";
+import fileUpload from "express-fileupload";
 
 const app = express();
 
@@ -15,6 +17,15 @@ app.use(cors({
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
+// File upload middleware
+app.use(fileUpload({
+  createParentPath: true,
+  limits: { 
+    fileSize: 5 * 1024 * 1024 // 5MB max file size
+  },
+  abortOnLimit: true
 }));
 
 app.use(express.json());
@@ -91,14 +102,12 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on port 5000
+  // Serve the app on port 8080
   // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = 5000;
+  const port = 8080;
   server.listen({
     port,
-    host: "0.0.0.0",
-    reusePort: true,
+    host: "localhost",
   }, () => {
     log(`serving on port ${port}`);
   });

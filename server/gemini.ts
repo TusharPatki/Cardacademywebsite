@@ -125,19 +125,17 @@ function enhanceMarkdownTables(content: string): string {
     
     return cleanedMatch;
   });
-  
   // Handle "Best Suited For" tables which seem to have formatting issues
-  const bestSuitedRegex = /(#+\s*Best Suited For.*?\n+)(?!\|)(.+?)(?=\n\n|$)/gs;
+  const bestSuitedRegex = /(#+\s*Best Suited For.*?\n+)(?!\|)(.+?)(?=\n\n|$)/g;
   enhanced = enhanced.replace(bestSuitedRegex, (match, title, content) => {
     // Try to extract data from malformed tables with || or | patterns
-    const rows = content.split(/\|\||(?:\n\|)/).filter(row => row.trim());
-    
+    const rows = content.split(/\|\||(?:\n\|)/).filter((row: string) => row.trim());
     if (rows.length > 0) {
       let fixedTable = '| Use Case | Best Card | Reason |\n|----------|-----------|--------|\n';
       
       for (const row of rows) {
         // Extract data from row using regex
-        const parts = row.split('|').filter(part => part.trim());
+        const parts = row.split('|').filter((part: string) => part.trim());
         if (parts.length >= 3) {
           fixedTable += `| ${parts[0].trim()} | ${parts[1].trim()} | ${parts[2].trim()} |\n`;
         } else if (parts.length === 2) {
@@ -157,7 +155,7 @@ function enhanceMarkdownTables(content: string): string {
     return '#'.repeat(Math.min(hashCount, 3)) + ' ' + content.trim();
   });
   
-  return enhanced;ced;
+  return enhanced;
 }
 
 export async function generateResponse(

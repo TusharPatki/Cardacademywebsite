@@ -79,7 +79,7 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
       slug: card.slug || "",
       bankId: card.bankId !== null && card.bankId !== undefined ? String(card.bankId) : "",
       categoryId: card.categoryId !== null && card.categoryId !== undefined ? String(card.categoryId) : "",
-      annualFee: card.annualFee || "$0",
+      annualFee: card.annualFee || "₹0",
       introApr: card.introApr || "",
       regularApr: card.regularApr || "",
       rewardsDescription: card.rewardsDescription || "",
@@ -97,7 +97,7 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
       slug: "",
       bankId: "",
       categoryId: "",
-      annualFee: "$0",
+      annualFee: "₹0",
       introApr: "",
       regularApr: "",
       rewardsDescription: "",
@@ -173,23 +173,87 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
     setIsPending(true);
     
     try {
-      // Convert string IDs to numbers before sending to API
-      const dataToSubmit = {
-        ...values,
-        bankId: values.bankId ? parseInt(values.bankId, 10) : undefined,
-        categoryId: values.categoryId ? parseInt(values.categoryId, 10) : undefined
+      // Log the raw form values
+      console.log("Raw form values:", values);
+
+      // Validate required fields with detailed logging
+      const requiredFields = {
+        name: values.name,
+        slug: values.slug,
+        bankId: values.bankId,
+        categoryId: values.categoryId,
+        annualFee: values.annualFee,
+        regularApr: values.regularApr,
+        rewardsDescription: values.rewardsDescription
       };
+
+      console.log("Required fields validation:", Object.entries(requiredFields).map(([field, value]) => ({
+        field,
+        value,
+        isEmpty: !value,
+        type: typeof value
+      })));
+
+      // Check for empty required fields
+      const emptyFields = Object.entries(requiredFields)
+        .filter(([_, value]) => !value)
+        .map(([field]) => field);
+
+      if (emptyFields.length > 0) {
+        console.log("Empty required fields:", emptyFields);
+        toast({
+          title: "Missing Required Fields",
+          description: `Please fill in: ${emptyFields.join(", ")}`,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Convert string IDs to numbers and prepare data for submission
+      const dataToSubmit = {
+        name: values.name.trim(),
+        slug: values.slug.trim(),
+        bankId: parseInt(values.bankId, 10),
+        categoryId: parseInt(values.categoryId, 10),
+        annualFee: values.annualFee.trim(),
+        regularApr: values.regularApr.trim(),
+        rewardsDescription: values.rewardsDescription.trim(),
+        // Optional fields with defaults
+        introApr: values.introApr?.trim() || "",
+        contentHtml: values.contentHtml?.trim() || "",
+        youtubeVideoId: values.youtubeVideoId?.trim() || "",
+        rating: values.rating?.trim() || "",
+        imageUrl: values.imageUrl?.trim() || "",
+        applyLink: values.applyLink?.trim() || "",
+        featured: values.featured || false,
+        cardColorFrom: values.cardColorFrom || "#0F4C81",
+        cardColorTo: values.cardColorTo || "#0F4C81",
+        publishDate: new Date(values.publishDate).toISOString()
+      };
+
+      // Log the processed data being sent
+      console.log("Processed data to submit:", JSON.stringify(dataToSubmit, null, 2));
       
       if (card) {
         // Update existing card
-        await apiRequest("PUT", `/api/cards/${card.id}`, dataToSubmit);
+        const response = await apiRequest("PUT", `/api/cards/${card.id}`, dataToSubmit);
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("Update error:", errorData);
+          throw new Error(errorData.message || "Failed to update card");
+        }
         toast({
           title: "Card updated",
           description: "The credit card has been updated successfully.",
         });
       } else {
         // Create new card
-        await apiRequest("POST", "/api/cards", dataToSubmit);
+        const response = await apiRequest("POST", "/api/cards", dataToSubmit);
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("Create error:", errorData);
+          throw new Error(errorData.message || "Failed to create card");
+        }
         toast({
           title: "Card created",
           description: "The credit card has been created successfully.",
@@ -203,7 +267,7 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
       console.error("Error saving card:", error);
       toast({
         title: "Error",
-        description: "Failed to save the credit card. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to save the credit card. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -306,7 +370,7 @@ export function CardForm({ card, onSuccess }: CardFormProps) {
               <FormItem>
                 <FormLabel>Annual Fee</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g. $0 or $95" {...field} />
+                  <Input placeholder="e.g. ₹0 or ₹5000" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

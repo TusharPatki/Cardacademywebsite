@@ -379,12 +379,12 @@ export default function CardDetailsPage() {
                           
                           <div>
                             <h4 className="font-medium mb-1">Late Payment Fee</h4>
-                            <p className="text-gray-700">Up to $40</p>
+                            <p className="text-gray-700">Up to ₹3000</p>
                           </div>
                           
                           <div>
                             <h4 className="font-medium mb-1">Balance Transfer Fee</h4>
-                            <p className="text-gray-700">Either $5 or 5% of the amount of each transfer, whichever is greater</p>
+                            <p className="text-gray-700">Either ₹400 or 5% of the amount of each transfer, whichever is greater</p>
                           </div>
                         </div>
                         
