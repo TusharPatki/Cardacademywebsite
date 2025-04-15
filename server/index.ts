@@ -114,10 +114,10 @@ app.use((req, res, next) => {
 
   // Serve the app on port 8080
   // this serves both the API and the client.
-  const port = 8080;
+  const port = process.env.PORT || 8080;
   server.listen({
     port,
-    host: "localhost",
+    host: "0.0.0.0",
   }, () => {
     log(`serving on port ${port}`);
   });

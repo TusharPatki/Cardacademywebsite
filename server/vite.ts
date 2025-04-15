@@ -71,7 +71,7 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(__dirname, "public");
+  const distPath = path.resolve(__dirname, "..", "dist", "client");
 
   if (!fs.existsSync(distPath)) {
     throw new Error(
@@ -79,9 +79,14 @@ export function serveStatic(app: Express) {
     );
   }
 
-  app.use(express.static(distPath));
+  // Serve static files
+  app.use(express.static(distPath, {
+    maxAge: "1y",
+    etag: true,
+    index: false
+  }));
 
-  // fall through to index.html if the file doesn't exist
+  // Serve index.html for all routes
   app.use("*", (_req, res) => {
     res.sendFile(path.resolve(distPath, "index.html"));
   });
