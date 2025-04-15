@@ -72,8 +72,8 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // Run migrations first
   try {
+    // Run migrations first
     log("Running database migrations...");
     const emailMigrationResult = await addEmailFieldToUsers();
     if (emailMigrationResult.success) {
@@ -81,44 +81,33 @@ app.use((req, res, next) => {
     } else {
       log(`Email migration issue: ${emailMigrationResult.message}`);
     }
-  } catch (error) {
-    log(`Error running migrations: ${error instanceof Error ? error.message : String(error)}`);
-  }
-  
-  // Then seed the database with initial data
-  try {
+    
+    // Then seed the database with initial data
     await seedDatabase();
     log("Database seeded successfully");
+
+    const server = await registerRoutes(app);
+
+    // importantly only setup vite in development and after
+    // setting up all the other routes so the catch-all route
+    // doesn't interfere with the other routes
+    if (app.get("env") === "development") {
+      await setupVite(app, server);
+    } else {
+      serveStatic(app);
+    }
+
+    // Serve the app on the port specified by Railway
+    const PORT = process.env.PORT || 3000;
+    server.listen({
+      port: PORT,
+      host: "0.0.0.0",
+    }, () => {
+      log(`Server is running on port ${PORT}`);
+      log(`Health check available at http://0.0.0.0:${PORT}/api/health`);
+    });
   } catch (error) {
-    log(`Error seeding database: ${error instanceof Error ? error.message : String(error)}`);
+    console.error("Failed to start server:", error);
+    process.exit(1);
   }
-
-  const server = await registerRoutes(app);
-
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-
-    res.status(status).json({ message });
-    throw err;
-  });
-
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
-  }
-
-  // Serve the app on port 8080
-  // this serves both the API and the client.
-  const port = process.env.PORT || 8080;
-  server.listen({
-    port,
-    host: "0.0.0.0",
-  }, () => {
-    log(`serving on port ${port}`);
-  });
 })();
