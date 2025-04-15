@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, RouteComponentProps } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -39,16 +39,30 @@ function Router() {
       {/* Admin Routes */}
       <Route path="/admin/login" component={AdminLoginPage} />
       <Route path="/admin" component={AdminDashboardPage} />
-      <Route path="/admin/cards" component={AdminCardsPage} />
-      <Route path="/admin/cards/new" component={() => <AdminCardsPage mode="new" />} />
-      <Route path="/admin/cards/edit/:id" component={AdminCardsPage} />
+      <Route path="/admin/cards">
+        {() => <AdminCardsPage />}
+      </Route>
+      <Route path="/admin/cards/new">
+        {() => <AdminCardsPage mode="new" />}
+      </Route>
+      <Route path="/admin/cards/edit/:id">
+        {() => <AdminCardsPage mode="edit" />}
+      </Route>
       <Route path="/admin/categories" component={AdminCategoriesPage} />
-      <Route path="/admin/banks" component={AdminBanksPage} />
+      <Route path="/admin/banks">
+        {() => <AdminBanksPage />}
+      </Route>
       <Route path="/admin/banks/new" component={() => <AdminBanksPage mode="new" />} />
-      <Route path="/admin/banks/edit/:id" component={AdminBanksPage} />
-      <Route path="/admin/articles" component={AdminArticlesPage} />
+      <Route path="/admin/banks/edit/:id">
+        {() => <AdminBanksPage mode="edit" />}
+      </Route>
+      <Route path="/admin/articles">
+        {() => <AdminArticlesPage />}
+      </Route>
       <Route path="/admin/articles/new" component={() => <AdminArticlesPage mode="new" />} />
-      <Route path="/admin/articles/edit/:id" component={AdminArticlesPage} />
+      <Route path="/admin/articles/edit/:id">
+        {() => <AdminArticlesPage mode="edit" />}
+      </Route>
       
       {/* Fallback to 404 */}
       <Route component={NotFound} />
