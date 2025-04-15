@@ -1,6 +1,6 @@
 [build]
-builder = "nixpacks"
-buildCommand = "npm install"
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
 
 [deploy]
 startCommand = "NODE_ENV=production PORT=$PORT node dist/server/index.js"
