@@ -1,10 +1,10 @@
 [build]
 builder = "nixpacks"
-buildCommand = "npm install"
+buildCommand = "npm install && npm run build"
 
 [deploy]
-startCommand = "npm run db:push && npm start"
-healthcheckPath = "/"
-healthcheckTimeout = 100
+startCommand = "npm run db:push && NODE_ENV=production node dist/index.js"
+healthcheckPath = "/api/health"
+healthcheckTimeout = 300
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10 

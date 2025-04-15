@@ -6,8 +6,15 @@ import { seedDatabase } from "./seed";
 import { addEmailFieldToUsers } from "./migrations/add-email-field";
 import cors from "cors";
 import fileUpload from "express-fileupload";
+import { healthCheck } from "./health";
 
 const app = express();
+
+// Basic error handling
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Something went wrong!' });
+});
 
 // CORS setup
 app.use(cors({
@@ -18,6 +25,9 @@ app.use(cors({
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
+
+// Health check endpoint
+app.get("/api/health", healthCheck);
 
 // File upload middleware
 app.use(fileUpload({
