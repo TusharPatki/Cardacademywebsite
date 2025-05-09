@@ -74,17 +74,25 @@ app.use((req, res, next) => {
 (async () => {
   try {
     // Run migrations first
-    log("Running database migrations...");
-    const emailMigrationResult = await addEmailFieldToUsers();
-    if (emailMigrationResult.success) {
-      log("Email migration completed successfully");
+    if (!process.env.SKIP_DB_MIGRATIONS) {
+      log("Running database migrations...");
+      const emailMigrationResult = await addEmailFieldToUsers();
+      if (emailMigrationResult.success) {
+        log("Email migration completed successfully");
+      } else {
+        log(`Email migration issue: ${emailMigrationResult.message}`);
+      }
     } else {
-      log(`Email migration issue: ${emailMigrationResult.message}`);
+      log("Skipping database migrations...");
     }
     
     // Then seed the database with initial data
-    await seedDatabase();
-    log("Database seeded successfully");
+    if (!process.env.SKIP_DB_SEED) {
+      await seedDatabase();
+      log("Database seeded successfully");
+    } else {
+      log("Skipping database seed...");
+    }
 
     const server = await registerRoutes(app);
 
