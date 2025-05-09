@@ -17,9 +17,15 @@ ENV SKIP_DB_SEED=true
 # Copy all files
 COPY . .
 
+RUN echo "Before npm --version. PATH is: $PATH"
+RUN ls -al /app
+RUN which npm
 # Check npm version
 RUN npm --version
 
+RUN echo "Before npm install. PATH is: $PATH"
+RUN ls -al /app
+RUN which npm
 # Install dependencies
 RUN npm install --legacy-peer-deps
 
