@@ -17,6 +17,9 @@ ENV SKIP_DB_SEED=true
 # Copy all files
 COPY . .
 
+# Check npm version
+RUN npm --version
+
 # Install dependencies
 RUN npm install --legacy-peer-deps
 
