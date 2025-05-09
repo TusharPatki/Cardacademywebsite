@@ -3,7 +3,7 @@ builder = "dockerfile"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "NODE_ENV=production PORT=$PORT node dist/server/index.js"
+startCommand = "PORT=$PORT node dist/server/index.js"
 healthcheckPath = "/api/health"
 healthcheckTimeout = 300
 restartPolicyType = "on_failure"
