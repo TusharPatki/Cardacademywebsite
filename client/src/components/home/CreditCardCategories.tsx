@@ -67,7 +67,7 @@ export function CreditCardCategories() {
   const sortedCards = [...filteredCards].sort((a, b) => {
     if (sortOption === "highest-cashback") {
       // This is a simplified sort - in reality, you'd parse the cashback percentage from the rewards description
-      return b.rewardsDescription.includes("5%") ? 1 : -1;
+      return b.rewardsDescription && b.rewardsDescription.includes("5%") ? 1 : -1;
     } else if (sortOption === "lowest-fee") {
       return parseInt(a.annualFee.replace(/[^0-9]/g, "")) - parseInt(b.annualFee.replace(/[^0-9]/g, ""));
     } else if (sortOption === "intro-apr") {

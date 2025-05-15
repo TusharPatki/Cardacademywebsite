@@ -76,14 +76,14 @@ export function AIChat() {
       // If no proper table definition, try to format the content as a table
       if (!tableDef || !tableDef.includes('|')) {
         // Attempt to fix malformed table by extracting data
-        const rows = content.split('||').filter(row => row.trim());
+        const rows = content.split('||').filter((row: string) => row.trim());
 
         if (rows.length > 0) {
           let fixedTable = '| Use Case | Best Card | Reason |\n|----------|-----------|--------|\n';
 
           for (const row of rows) {
             // Extract data from row using regex
-            const parts = row.split('|').filter(part => part.trim());
+            const parts = row.split('|').filter((part: string) => part.trim());
             if (parts.length >= 3) {
               fixedTable += `| ${parts[0].trim()} | ${parts[1].trim()} | ${parts[2].trim()} |\n`;
             } else if (parts.length === 2) {

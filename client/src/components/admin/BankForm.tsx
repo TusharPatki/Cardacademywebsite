@@ -38,15 +38,19 @@ export function BankForm({ bank, onSuccess }: BankFormProps) {
   // Initialize form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: bank ? {
-      ...bank,
-      logoUrl: bank.logoUrl || "",
-    } : {
-      name: "",
-      slug: "",
-      logoUrl: "",
-      description: "",
-    },
+    defaultValues: bank
+      ? {
+          name: bank.name,
+          slug: bank.slug,
+          logoUrl: bank.logoUrl || "",
+          description: bank.description || "",
+        }
+      : {
+          name: "",
+          slug: "",
+          logoUrl: "",
+          description: "",
+        },
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {

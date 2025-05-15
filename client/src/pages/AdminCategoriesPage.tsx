@@ -70,7 +70,7 @@ export default function AdminCategoriesPage() {
   });
 
   // Get all categories
-  const { data: categories, isLoading, isError } = useQuery({
+  const { data: categories, isLoading, isError } = useQuery<Category[]>({
     queryKey: ['/api/categories'],
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
@@ -230,7 +230,7 @@ export default function AdminCategoriesPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {categories.map((category: Category) => (
+              {categories?.map((category: Category) => (
                 <TableRow key={category.id}>
                   <TableCell>{category.id}</TableCell>
                   <TableCell className="font-medium">{category.name}</TableCell>

@@ -266,7 +266,7 @@ export default function AdminCardsPage({ mode }: AdminCardsPageProps) {
                           <div className="flex items-center">
                             <div 
                               className="w-6 h-6 rounded mr-3"
-                              style={{ backgroundColor: card.cardColorFrom }}
+                              style={{ backgroundColor: card.cardColorFrom || undefined }}
                             ></div>
                             {card.name}
                           </div>

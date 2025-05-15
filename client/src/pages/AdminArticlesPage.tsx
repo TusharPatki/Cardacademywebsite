@@ -66,7 +66,7 @@ export default function AdminArticlesPage({ mode }: AdminArticlesPageProps) {
   
   // Get unique categories
   const categories = articles 
-    ? [...new Set(articles.map(article => article.category))]
+    ? Array.from(new Set(articles.map(article => article.category)))
     : [];
   
   // Filter articles
